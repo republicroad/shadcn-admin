@@ -65,7 +65,7 @@ apt install proxychains4
 socks5  192.168.1.201 1080
 ```
 
-## bun 安装
+## [bun 安装 ](https://www.bunjs.cn/docs/installation) 
 
 Bun 是用于运行 JavaScript 和 TypeScript 应用程序的集成工具包。它以单一可执行文件的形式发布，文件名为 bun。
 
@@ -73,7 +73,15 @@ Bun 的核心是 Bun 运行时，这是一种快速 JavaScript 运行时，可�
 
 ```bash
 # 安装
+# linux/macos curl
 proxychains curl -fsSL https://bun.sh/install | proxychains bash
+
+# npm
+npm install -g bun
+
+# Homebrew
+brew install oven-sh/bun/bun
+
 
 # 查看版本
 bun --version
