@@ -49,6 +49,47 @@ react hook 用来修改组件状态，协调组件之间的状态变化, 控制�
 补充 tailwindcss 的特点和用法
 
 
+## proxychains4
+
+代理工具，用于加速安装依赖包
+
+```bash
+# 安装proxychains4
+apt install proxychains4
+```
+
+```
+# 将proxy 配置加入到配置文件/etc/proxychains4.conf 中
+
+#socks4   127.0.0.1 9050  # 文件中的此行需注释掉
+socks5  192.168.1.201 1080
+```
+
+## bun 安装
+
+Bun 是用于运行 JavaScript 和 TypeScript 应用程序的集成工具包。它以单一可执行文件的形式发布，文件名为 bun。
+
+Bun 的核心是 Bun 运行时，这是一种快速 JavaScript 运行时，可直接替换 Node.js。Bun 采用 Zig 语言编写，底层采用 JavaScriptCore 引擎，大大减少了启动时间和内存使用量。
+
+```bash
+# 安装
+proxychains curl -fsSL https://bun.sh/install | proxychains bash
+
+# 查看版本
+bun --version
+```
+
+## Shadcn Admin web 依赖安装 、 运行
+
+```bash
+# 依赖安装
+bun install 
+
+# 运行
+bun run dev
+```
+
+
 # Shadcn Admin Dashboard
 
 Admin Dashboard UI crafted with Shadcn and Vite. Built with responsiveness and accessibility in mind.
