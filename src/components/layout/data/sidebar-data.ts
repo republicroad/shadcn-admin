@@ -18,6 +18,7 @@ import {
   IconUserCog,
   IconUserOff,
   IconUsers,
+  IconMedal,
 } from '@tabler/icons-react'
 import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
@@ -55,6 +56,17 @@ export const sidebarData: SidebarData = {
           url: '/',
           icon: IconLayoutDashboard,
         },
+        {
+          title: 'Projects',
+          url: '/projects',
+          icon: IconMedal,
+        },
+         {
+          title: 'Rules',
+          url: '/rules',
+          icon: IconMedal,
+        },
+
         {
           title: 'Tasks',
           url: '/tasks',
