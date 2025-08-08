@@ -2,7 +2,7 @@ import { HTMLAttributes, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -16,8 +16,19 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import httpClient from '../../../../api/api'
+import { jwtDecode } from "jwt-decode";
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
+
+interface jwtPayload {
+  username: string;
+  user_id: string;
+  exp: number;
+  roles?: string[];
+}
 
 const formSchema = z.object({
   email: z.email({
@@ -29,8 +40,20 @@ const formSchema = z.object({
     .min(7, 'Password must be at least 7 characters long'),
 })
 
+const loginUser = async (credentials: any) => {
+  credentials.username = credentials.email  // delete credentials.email
+  console.log("loginUser:", credentials);
+  // const response = await httpClient.post('/api/login', credentials);
+  const response = await axios.post('/geerule/login', credentials); // Replace with your API endpoint
+  // const response = await fetch('/api/login', credentials);
+  console.log("response:", response);
+  console.log("response.data:", response.data);
+  return response.data;
+};
+
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,15 +62,36 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       password: '',
     },
   })
+  // const queryClient = useQueryClient();
+  const {mutate, isError, isSuccess, data, error} = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => { // data 以后可以考虑用 typescript 类型来定义.
+      // Store token/user data in local storage or context if needed
+      if (data.status == 0){
+        // alert(data.message);
+        const user_jwt: jwtPayload = jwtDecode(data.data.accessToken);
+        localStorage.setItem('authToken', data.data.accessToken); 
+        localStorage.setItem('authTokenUsername', user_jwt.username); 
+        localStorage.setItem('authTokenExp', user_jwt.exp.toString()); 
+        navigate({ to: '/' });
+      }else{
+        alert(data.message);
+      }
+      // Invalidate relevant queries to refetch user data if a useQuery is present
+      // queryClient.invalidateQueries(['user']); 
+    },
+    onError: (error) => {
+      alert(`Login failed: ${error.message}`);
+    },
+  });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     // eslint-disable-next-line no-console
-    console.log(data)
-
+    mutate(data);
     setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+    }, 1000)
   }
 
   return (

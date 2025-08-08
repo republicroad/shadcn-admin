@@ -4,6 +4,11 @@
 基于 Shadcn Admin Dashboard 研发 brde web admin 项目. 使用 bun 进行项目管理.
 
 
+## vite
+
+[Environment Variables in Vite React Application](https://javascript.plainenglish.io/environment-variables-in-vite-react-application-ca2d5051ee7c)  
+[Simplifying API Proxies in Vite: A Guide to vite.config.js](https://medium.com/@eric_abell/simplifying-api-proxies-in-vite-a-guide-to-vite-config-js-a5cc3a091a2f)  
+
 ## react
 
 - [React: 用于构建 Web 和原生交互界面的库](https://zh-hans.react.dev/)  
@@ -43,6 +48,8 @@ react hook 用来修改组件状态，协调组件之间的状态变化, 控制�
 示例程序: 
 [TanStack Query React Example: Basic](https://tanstack.com/query/latest/docs/framework/react/examples/basic)
 
+
+[React Query - useMutation](https://dev.to/this-is-learning/react-query-usemutation-2cmg)  
 
 ## [tailwindcss](https://tailwindcss.com/)
 
@@ -95,8 +102,14 @@ bun install
 
 # 运行
 bun run dev
+bun run dev  # 如果电脑上安装了 node
 ```
 
+如果电脑上安装了 node 和 bun, 想强制程序使用 bun 的运行时, 请使用下列命令:  
+
+```bash
+bun -b run dev 
+```
 
 # Shadcn Admin Dashboard
 

@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import axios from 'axios'
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 
 type SignUpFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -35,8 +38,19 @@ const formSchema = z
     path: ['confirmPassword'],
   })
 
+const registerUser = async (credentials: any) => {
+  credentials.username = credentials.email  // delete credentials.email
+  console.log("registerUser:", credentials);
+  // const response = await httpClient.post('/api/login', credentials);
+  const response = await axios.post('/geerule/register', credentials); // Replace with your API endpoint
+  // const response = await fetch('/api/login', credentials);
+  return response.data;
+};
+
+
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,11 +60,26 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       confirmPassword: '',
     },
   })
-
+  const {mutate, isError, isSuccess, data, error} = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => { // data 以后可以考虑用 typescript 类型来定义.
+      // Store token/user data in local storage or context if needed
+      console.log("onSuccess:", data);
+      if (data.status == 0){
+        alert(data.message);
+        navigate({ to: '/sign-in' });
+      }else{
+        alert(data.message);
+      }
+    },
+    onError: (error) => {
+      alert(`Login failed: ${error.message}`);
+    },
+  });
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
     // eslint-disable-next-line no-console
-    console.log(data)
+    mutate(data)
 
     setTimeout(() => {
       setIsLoading(false)
