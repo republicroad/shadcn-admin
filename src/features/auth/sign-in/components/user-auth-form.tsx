@@ -19,16 +19,9 @@ import { PasswordInput } from '@/components/password-input'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import httpClient from '../../../../api/api'
-import { jwtDecode } from "jwt-decode";
+import { setAuthToken } from '@/lib/auth';
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
-
-interface jwtPayload {
-  username: string;
-  user_id: string;
-  exp: number;
-  roles?: string[];
-}
 
 const formSchema = z.object({
   email: z.email({
@@ -46,7 +39,7 @@ const loginUser = async (credentials: any) => {
   // const response = await httpClient.post('/api/login', credentials);
   const response = await axios.post('/geerule/login', credentials); // Replace with your API endpoint
   // const response = await fetch('/api/login', credentials);
-  console.log("response:", response);
+  // console.log("response:", response);
   console.log("response.data:", response.data);
   return response.data;
 };
@@ -69,10 +62,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       // Store token/user data in local storage or context if needed
       if (data.status == 0){
         // alert(data.message);
-        const user_jwt: jwtPayload = jwtDecode(data.data.accessToken);
-        localStorage.setItem('authToken', data.data.accessToken); 
-        localStorage.setItem('authTokenUsername', user_jwt.username); 
-        localStorage.setItem('authTokenExp', user_jwt.exp.toString()); 
+        setAuthToken(data.data.accessToken);
         navigate({ to: '/' });
       }else{
         alert(data.message);

@@ -46,20 +46,22 @@ export default defineConfig({
             // console.log("import.meta.env.BASE_URL:", import.meta.env.BASE_URL);
             console.log('Proxy Request:', req.method, req.url);
             // You can also log headers or body if needed:
-            console.log('Request Headers:', proxyReq.getHeaders());
+            // console.log('Request Headers:', proxyReq.getHeaders());
             // console.log('Request Bodys:', req.body);`
           });
           proxy.on('proxyRes', (proxyRes, req, res) => {
-            let body: any = [];
-            proxyRes.on('data', (chunk) => {
-              body.push(chunk);
-            });
-            proxyRes.on('end', () => {
-              body = Buffer.concat(body).toString();
-              console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
-              console.log('Response Headers:', proxyRes.headers);
-              console.log(`Proxy Response Body for ${req.url}:`, body);
-            });
+            console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
+            // console.log('Response Headers:', proxyRes.headers);
+            // let body: any = [];
+            // proxyRes.on('data', (chunk) => {
+            //   body.push(chunk);
+            // });
+            // proxyRes.on('end', () => {
+            //   body = Buffer.concat(body).toString();
+            //   console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
+            //   console.log('Response Headers:', proxyRes.headers);
+            //   console.log(`Proxy Response Body for ${req.url}:`, body);
+            // });
           });
 
           // Log errors during proxying

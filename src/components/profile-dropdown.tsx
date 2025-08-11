@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,8 +11,20 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { signOut } from '@/lib/auth';
 
 export function ProfileDropdown() {
+  const router = useRouter();
+  // const navigate = useNavigate();  # navigate({ to: '/sign-in' }); 
+  const handleLogout = async () => {
+    // 1. Update authentication state (e.g., clear localStorage)
+    signOut(); 
+    // 2. Invalidate TanStack Router state to re-evaluate loaders/guards
+    await router.invalidate(); 
+    // 3. Navigate to a public route (e.g., login page)
+    router.navigate({ to: '/sign-in' }); 
+  };
+  
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -55,7 +67,7 @@ export function ProfileDropdown() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

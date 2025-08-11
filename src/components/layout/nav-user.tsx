@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import {
   BadgeCheck,
   Bell,
@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { signOut } from '@/lib/auth'; 
 
 export function NavUser({
   user,
@@ -34,6 +35,16 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter();
+  // const navigate = useNavigate();  # navigate({ to: '/sign-in' }); 
+  const handleLogout = async () => {
+    // 1. Update authentication state (e.g., clear localStorage)
+    signOut(); 
+    // 2. Invalidate TanStack Router state to re-evaluate loaders/guards
+    await router.invalidate(); 
+    // 3. Navigate to a public route (e.g., login page)
+    router.navigate({ to: '/sign-in' }); 
+  };
 
   return (
     <SidebarMenu>
@@ -102,8 +113,8 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut/>
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
