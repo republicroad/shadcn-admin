@@ -98,3 +98,9 @@ if (!rootElement.innerHTML) {
     </StrictMode>
   )
 }
+if (import.meta.env.DEV)
+{
+  // const { axios_mocker } = await import('./mocks/browser')
+  await import('./mocks/axios_mocker')
+  console.log("axios mocker started!")
+}
