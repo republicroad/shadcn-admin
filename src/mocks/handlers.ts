@@ -1,22 +1,42 @@
 // src/mocks/handlers.ts
 import { http, HttpResponse } from 'msw'
-const login_res = {
-    "status": 0,
-    "message": "登陆成功！",
-    "data": {
-        "user": {
-            "user_id": "2344f9862db5422b8a155897626f72c4",
-            "user_key": "4c61f72fdca348b095b2a9c2eeb95a64",
-            "username": "wanghao@geetest.com",
-            "permissions": []
-        },
-        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndhbmdoYW9AZ2VldGVzdC5jb20iLCJ1c2VyX2lkIjoiMjM0NGY5ODYyZGI1NDIyYjhhMTU1ODk3NjI2ZjcyYzQiLCJleHAiOjE3NTUyMzkyMDZ9.WXJyPx58AFl8YvmG0R9AimdhVTaGA6SSDlCkPhxZSDE",
-        "expire_time": 1755239206
-    }
-}
 
 export const handlers = [
   http.post('geerule/login', () => {
-    return HttpResponse.json(login_res)
+    return HttpResponse.json(fake_user_login_jwt())
   }),
 ]
+
+function fake_user_login_jwt(){
+  const user = {
+    "username": "wanghao@geetest.com",
+    "user_id": "2344f9862db5422b8a155897626f72c4",
+    "exp": Date.now()/1000 + 3600
+  }
+  // 1. Convert object to JSON string
+  const jsonString = JSON.stringify(user);
+  // 2. Base64 encode the JSON string
+  const fakePayload = btoa(jsonString);
+  var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndhbmdoYW9AZ2VldGVzdC5jb20iLCJ1c2VyX2lkIjoiMjM0NGY5ODYyZGI1NDIyYjhhMTU1ODk3NjI2ZjcyYzQiLCJleHAiOjE3NTU1MDMzNjh9.6zdp0451v8qqNZDsb28sXdU4Dwt3KJIVTRbOZQGHJSQ"
+  // jwt token 本质就是 {header}.{payload}.{signature} 的格式字符串.
+  // 其中 header 和 payload 都是 data object JSON.stringify() 之后在去 base64(btoa) 之后生成的字符串. 加上最后的签名用来校验是否被篡改.
+  const [header, payload, signature] = accessToken.split(".");
+  accessToken = [header, fakePayload, signature].join(".");
+
+  const login_res: object = {
+      "status": 0,
+      "message": "登陆成功！",
+      "data": {
+          "user": {
+              "user_id": "2344f9862db5422b8a155897626f72c4",
+              "user_key": "4c61f72fdca348b095b2a9c2eeb95a64",
+              "username": user["username"],
+              "permissions": []
+          },
+          "accessToken": accessToken,
+          "expire_time": 1755239206
+      }
+  }
+  return login_res
+}
+
