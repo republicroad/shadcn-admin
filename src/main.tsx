@@ -82,25 +82,50 @@ declare module '@tanstack/react-router' {
   }
 }
 
-// Render the app
-const rootElement = document.getElementById('root')!
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-          <FontProvider>
-            <RouterProvider router={router} />
-          </FontProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </StrictMode>
-  )
+// // Render the app
+// const rootElement = document.getElementById('root')!
+// if (!rootElement.innerHTML) {
+//   const root = ReactDOM.createRoot(rootElement)
+//   root.render(
+//     <StrictMode>
+//       <QueryClientProvider client={queryClient}>
+//         <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+//           <FontProvider>
+//             <RouterProvider router={router} />
+//           </FontProvider>
+//         </ThemeProvider>
+//       </QueryClientProvider>
+//     </StrictMode>
+//   )
+// }
+
+async function enableMocking() {
+  if (process.env.NODE_ENV !== 'development') {
+    return
+  }
+ 
+  const { worker } = await import('./mocks/browser')
+ 
+  // `worker.start()` returns a Promise that resolves
+  // once the Service Worker is up and ready to intercept requests.
+  return worker.start({ onUnhandledRequest: "bypass" })
+  // 
 }
-if (import.meta.env.DEV)
-{
-  // const { axios_mocker } = await import('./mocks/browser')
-  await import('./mocks/axios_mocker')
-  console.log("axios mocker started!")
-}
+enableMocking().then(() => {
+  // Render the app
+  const rootElement = document.getElementById('root')!
+  if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement)
+    root.render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+            <FontProvider>
+              <RouterProvider router={router} />
+            </FontProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </StrictMode>
+    )
+  }
+})

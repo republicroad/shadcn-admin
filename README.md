@@ -51,6 +51,27 @@ react hook 用来修改组件状态，协调组件之间的状态变化, 控制�
 
 [React Query - useMutation](https://dev.to/this-is-learning/react-query-usemutation-2cmg)  
 
+
+## mock api server
+
+### [Mock Service Worker(MSW)](https://mswjs.io/docs/)
+
+这是一个用于 mock 请求数据的库，在 node 和 浏览器的 worker 层面拦截网络请求. 这个mock库可以在调试工具的 network 中看到网络请求.
+这个适合用于加速前端页面开发和调试.
+
+
+### axios-mock-adapter
+
+在main.tsx中加入此逻辑，表示在开发环境下动态导入 mocker 相关的模块. 这个mock工具的缺点是无法再调试工具看到网络请求.
+```ts
+if (import.meta.env.DEV)
+{
+  // const { axios_mocker } = await import('./mocks/browser')
+  await import('./mocks/axios_mocker')
+  console.log("axios mocker started!")
+}
+```
+
 ## [tailwindcss](https://tailwindcss.com/)
 
 补充 tailwindcss 的特点和用法
