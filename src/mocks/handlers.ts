@@ -1,11 +1,29 @@
 // src/mocks/handlers.ts
 import { http, HttpResponse } from 'msw'
+import { users } from '../features/users/data/users'
+import { tasks } from '../features/tasks/data/tasks'
+import { conversations } from '../features/chats/data/convo.json'
+// import data1 from '../features/chats/data/convo.json' with { type: 'json' }
 
 export const handlers = [
   http.post('geerule/login', async ({ request }) => {
         const requestBody = await request.json();
-        return HttpResponse.json(fake_user_login_jwt(requestBody))
+        return HttpResponse.json(fake_user_login_jwt(requestBody));
   }),
+  http.all('/api/users', async ({ request }) => {
+        // const requestBody = await request.json();
+        return HttpResponse.json(users);
+  }),
+  http.all('/api/tasks', async ({ request }) => {
+        // const requestBody = await request.json();
+        return HttpResponse.json(tasks);
+  }),
+  http.all('/api/chats', async ({ request }) => {
+        // const requestBody = await request.json();
+        return HttpResponse.json(conversations);
+  }),
+
+
 ]
 
 interface LoginUser {
@@ -47,4 +65,3 @@ function fake_user_login_jwt(requestBody:any){
   }
   return login_res
 }
-

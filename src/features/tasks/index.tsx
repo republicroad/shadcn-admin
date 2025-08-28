@@ -8,9 +8,24 @@ import { DataTable } from './components/data-table'
 import { TasksDialogs } from './components/tasks-dialogs'
 import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import TasksProvider from './context/tasks-context'
-import { tasks } from './data/tasks'
+// import { tasks } from './data/tasks'
+import { useQuery } from '@tanstack/react-query'
+
 
 export default function Tasks() {
+  const { data } = useQuery({
+    queryKey: ['/api/tasks'],
+    queryFn: async () => {
+      const response = await fetch('/api/tasks');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const res = response.json();
+      return res;
+    },
+  });
+
+  const tasks = data ?? [];
   return (
     <TasksProvider>
       <Header fixed>

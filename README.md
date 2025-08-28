@@ -3,6 +3,42 @@
 
 基于 Shadcn Admin Dashboard 研发 brde web admin 项目. 使用 bun 进行项目管理.
 
+## typescript
+
+
+### null and undefined
+
+[Beginner’s Guide: How to Check Null and Undefined in TypeScript](https://javascript.plainenglish.io/beginners-guide-how-to-check-null-and-undefined-in-typescript-c6492a07b609)
+
+
+In TypeScript, when comparing a value to undefined, both the loose equality operator (==) and the strict equality operator (===) can be used, but they have different behaviors and implications:  
+
+- Loose Equality (==):  
+
+  The == operator performs type coercion before comparison. This means it attempts to convert the operands to a common type before checking their values.
+When comparing undefined using ==, it will evaluate to true if the other operand is either null or undefined.
+Example: null == undefined evaluates to true.
+
+- Strict Equality (===):  
+
+  The === operator performs a strict comparison, meaning it checks both the value and the type of the operands without any type coercion.
+  When comparing undefined using ===, it will only evaluate to true if the other operand is exactly undefined. It will not consider null to be equal to undefined.  
+
+  Example: null === undefined evaluates to false.  
+  Recommendation:
+
+  It is generally recommended to use the strict equality operator (===) for comparisons in TypeScript (and JavaScript). This is because:
+  - Predictability:  
+    It avoids unexpected behavior due to type coercion, making your code more predictable and easier to reason about.
+  - Clarity:  
+    It clearly indicates that you are looking for an exact match of both value and type.
+  - Type Safety:  
+    In TypeScript, strict equality aligns better with the type system, as it ensures that you are comparing values of the same type.  
+    
+
+When == might be used: While === is preferred, there are specific cases where == null might be used as a shorthand to check for both null and undefined simultaneously, as value == null will be true if value is either null or undefined. However, value === undefined should be used if the intent is to strictly check for undefined only.
+
+
 
 ## vite
 

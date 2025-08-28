@@ -27,7 +27,8 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { NewChat } from './components/new-chat'
 import { type ChatUser, type Convo } from './data/chat-types'
 // Fake Data
-import { conversations } from './data/convo.json'
+// import { conversations } from './data/convo.json'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Chats() {
   const [search, setSearch] = useState('')
@@ -38,6 +39,18 @@ export default function Chats() {
   const [createConversationDialogOpened, setCreateConversationDialog] =
     useState(false)
 
+  const { data } = useQuery({
+    queryKey: ['/api/chats'],
+    queryFn: async () => {
+      const response = await fetch('/api/chats');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const res = response.json();
+      return res;
+    },
+  });
+  const conversations = data ?? [];
   // Filtered data based on the search query
   const filteredChatList = conversations.filter(({ fullName }) =>
     fullName.toLowerCase().includes(search.trim().toLowerCase())

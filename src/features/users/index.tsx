@@ -8,13 +8,29 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersTable } from './components/users-table'
 import UsersProvider from './context/users-context'
-import { userListSchema } from './data/schema'
-import { users } from './data/users'
+import { userListSchema, User} from './data/schema'
+// import { users } from './data/users'
+import { useQuery } from '@tanstack/react-query'
+
 
 export default function Users() {
   // Parse user list
-  const userList = userListSchema.parse(users)
-
+  // const userList = userListSchema.parse(users);
+  const { data } = useQuery({  // data, isLoading, isError, error 
+    queryKey: ['/api/users'],
+    queryFn: async () => {
+      const response = await fetch('/api/users');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const res = response.json();
+      return res;
+    },
+  });
+  // data is undefined initially because the query is still in the process of fetching data.
+  // data 可能返回 undefined
+  const userList: User[] = userListSchema.parse(data ?? []);
+  
   return (
     <UsersProvider>
       <Header fixed>

@@ -33,7 +33,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8000', // Backend server
         changeOrigin: true, // Ensure the request appears to come from the frontend server
-        rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove '/api' prefix
+        // rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove '/api' prefix
       },
       '/geerule': {
         target: 'http://localhost:8000', // Backend server
