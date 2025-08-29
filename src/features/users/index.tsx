@@ -9,8 +9,6 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-// import UsersProvider from './context/users-context'
-import { userListSchema, User} from './data/schema'
 import { useQuery } from '@tanstack/react-query'
 // import { users } from './data/users'
 
@@ -32,7 +30,7 @@ export function Users() {
   });
   // data is undefined initially because the query is still in the process of fetching data.
   // data 可能返回 undefined
-  const users: User[] = userListSchema.parse(data ?? []);
+  const users = data ?? [];
 
   return (
     <UsersProvider>
