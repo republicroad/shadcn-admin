@@ -1,21 +1,24 @@
+import { getRouteApi } from '@tanstack/react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { columns } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
+import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-import UsersProvider from './context/users-context'
+// import UsersProvider from './context/users-context'
 import { userListSchema, User} from './data/schema'
-// import { users } from './data/users'
 import { useQuery } from '@tanstack/react-query'
+// import { users } from './data/users'
 
+const route = getRouteApi('/_authenticated/users/')
 
-export default function Users() {
-  // Parse user list
-  // const userList = userListSchema.parse(users);
+export function Users() {
+  const search = route.useSearch()
+  const navigate = route.useNavigate()
   const { data } = useQuery({  // data, isLoading, isError, error 
     queryKey: ['/api/users'],
     queryFn: async () => {
@@ -29,14 +32,15 @@ export default function Users() {
   });
   // data is undefined initially because the query is still in the process of fetching data.
   // data 可能返回 undefined
-  const userList: User[] = userListSchema.parse(data ?? []);
-  
+  const users: User[] = userListSchema.parse(data ?? []);
+
   return (
     <UsersProvider>
       <Header fixed>
         <Search />
-        <div className='ml-auto flex items-center space-x-4'>
+        <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
+          <ConfigDrawer />
           <ProfileDropdown />
         </div>
       </Header>
@@ -52,7 +56,7 @@ export default function Users() {
           <UsersPrimaryButtons />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <UsersTable data={userList} columns={columns} />
+          <UsersTable data={users} search={search} navigate={navigate} />
         </div>
       </Main>
 

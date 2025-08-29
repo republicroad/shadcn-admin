@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { fonts } from '@/config/fonts'
+import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
-import { showSubmittedData } from '@/utils/show-submitted-data'
-import { useFont } from '@/context/font-context'
-import { useTheme } from '@/context/theme-context'
+import { useFont } from '@/context/font-provider'
+import { useTheme } from '@/context/theme-provider'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Form,
@@ -74,7 +74,7 @@ export function AppearanceForm() {
                     ))}
                   </select>
                 </FormControl>
-                <ChevronDownIcon className='absolute top-2.5 right-3 h-4 w-4 opacity-50' />
+                <ChevronDownIcon className='absolute end-3 top-2.5 h-4 w-4 opacity-50' />
               </div>
               <FormDescription className='font-manrope'>
                 Set the font you want to use in the dashboard.
@@ -87,7 +87,7 @@ export function AppearanceForm() {
           control={form.control}
           name='theme'
           render={({ field }) => (
-            <FormItem className='space-y-1'>
+            <FormItem>
               <FormLabel>Theme</FormLabel>
               <FormDescription>
                 Select the theme for the dashboard.

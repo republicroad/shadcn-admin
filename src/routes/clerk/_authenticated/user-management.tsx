@@ -5,8 +5,8 @@ import {
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
-import { IconArrowUpRight, IconLoader2 } from '@tabler/icons-react'
 import { SignedIn, useAuth, UserButton } from '@clerk/clerk-react'
+import { ExternalLink, Loader2 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/header'
@@ -14,12 +14,10 @@ import { Main } from '@/components/layout/main'
 import { LearnMore } from '@/components/learn-more'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { columns } from '@/features/users/components/users-columns'
 import { UsersDialogs } from '@/features/users/components/users-dialogs'
 import { UsersPrimaryButtons } from '@/features/users/components/users-primary-buttons'
+import { UsersProvider } from '@/features/users/components/users-provider'
 import { UsersTable } from '@/features/users/components/users-table'
-import UsersProvider from '@/features/users/context/users-context'
-import { userListSchema } from '@/features/users/data/schema'
 import { users } from '@/features/users/data/users'
 
 export const Route = createFileRoute('/clerk/_authenticated/user-management')({
@@ -27,13 +25,16 @@ export const Route = createFileRoute('/clerk/_authenticated/user-management')({
 })
 
 function UserManagement() {
+  const search = Route.useSearch()
+  const navigate = Route.useNavigate()
+
   const [opened, setOpened] = useState(true)
   const { isLoaded, isSignedIn } = useAuth()
 
   if (!isLoaded) {
     return (
       <div className='flex h-svh items-center justify-center'>
-        <IconLoader2 className='size-8 animate-spin' />
+        <Loader2 className='size-8 animate-spin' />
       </div>
     )
   }
@@ -42,15 +43,13 @@ function UserManagement() {
     return <Unauthorized />
   }
 
-  // Parse user list
-  const userList = userListSchema.parse(users)
   return (
     <>
       <SignedIn>
         <UsersProvider>
           <Header fixed>
             <Search />
-            <div className='ml-auto flex items-center space-x-4'>
+            <div className='ms-auto flex items-center space-x-4'>
               <ThemeSwitch />
               <UserButton />
             </div>
@@ -82,7 +81,7 @@ function UserManagement() {
                     <p className='mt-4'>
                       You can sign out or manage/delete your account via the
                       User Profile menu in the top-right corner of the page.
-                      <IconArrowUpRight className='inline-block size-4' />
+                      <ExternalLink className='inline-block size-4' />
                     </p>
                   </LearnMore>
                 </div>
@@ -90,7 +89,7 @@ function UserManagement() {
               <UsersPrimaryButtons />
             </div>
             <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-              <UsersTable data={userList} columns={columns} />
+              <UsersTable data={users} navigate={navigate} search={search} />
             </div>
           </Main>
 

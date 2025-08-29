@@ -1,10 +1,10 @@
-import { HTMLAttributes, useState } from 'react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -21,11 +21,14 @@ import {
   InputOTPSeparator,
 } from '@/components/ui/input-otp'
 
-type OtpFormProps = HTMLAttributes<HTMLFormElement>
-
 const formSchema = z.object({
-  otp: z.string().min(6, 'Please enter your otp code.'),
+  otp: z
+    .string()
+    .min(6, 'Please enter the 6-digit code.')
+    .max(6, 'Please enter the 6-digit code.'),
 })
+
+type OtpFormProps = React.HTMLAttributes<HTMLFormElement>
 
 export function OtpForm({ className, ...props }: OtpFormProps) {
   const navigate = useNavigate()

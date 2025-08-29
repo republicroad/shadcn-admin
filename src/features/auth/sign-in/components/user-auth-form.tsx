@@ -1,10 +1,13 @@
-import { HTMLAttributes, useState } from 'react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
+import { Loader2, LogIn } from 'lucide-react'
+import { toast } from 'sonner'
+import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { useAuthStore } from '@/stores/auth-store'
+import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -16,12 +19,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
-import httpClient from '../../../../api/api'
 import { setAuthToken } from '@/lib/auth';
 
-type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
 const formSchema = z.object({
   email: z.email({
@@ -36,17 +37,28 @@ const formSchema = z.object({
 const loginUser = async (credentials: any) => {
   credentials.username = credentials.email  // delete credentials.email
   console.log("loginUser:", credentials);
+  // import httpClient from '../../../../api/api'
   // const response = await httpClient.post('/api/login', credentials);
   const response = await axios.post('/geerule/login', credentials); // Replace with your API endpoint
   // const response = await fetch('/api/login', credentials);
   // console.log("response:", response);
-  console.log("response.data:", response.data);
+  // console.log("response.data:", response.data);  
   return response.data;
 };
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
+  redirectTo?: string
+}
+
+export function UserAuthForm({
+  className,
+  redirectTo,
+  ...props
+}: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { auth } = useAuthStore()
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,15 +67,27 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       password: '',
     },
   })
-  // const queryClient = useQueryClient();
-  const {mutate, isError, isSuccess, data, error} = useMutation({
+
+  const { mutate } = useMutation({  // isError, isSuccess, data, error
     mutationFn: loginUser,
     onSuccess: (data) => { // data 以后可以考虑用 typescript 类型来定义.
       // Store token/user data in local storage or context if needed
       if (data.status == 0){
         // alert(data.message);
-        setAuthToken(data.data.accessToken);
-        navigate({ to: '/' });
+        const { username } = setAuthToken(data.data.accessToken);
+        // Set user and access token
+        const user = {
+          accountNo: username,
+          email: username,
+          role: ['user'],
+          exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+        }
+        auth.setUser(user);
+        // AccessToken 会存在 cookie 中携带, 是否把sessionid放在jwt(accessToken)中返回?
+        auth.setAccessToken(data.data.accessToken)
+        // Redirect to the stored location or default to dashboard
+        const targetPath = redirectTo || '/'
+        navigate({ to: targetPath, replace: true })
       }else{
         alert(data.message);
       }
@@ -76,12 +100,16 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    // eslint-disable-next-line no-console
-    mutate(data);
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
+    setIsLoading(true)
+    toast.promise(sleep(0.01), {
+      loading: 'Signing in...',
+      success: () => {
+        setIsLoading(false);
+        mutate(data); // 未来兼容 cookie 和 localstorage
+        return `Welcome back, ${data.email}!`
+      },
+      error: 'Error',
+    })
   }
 
   return (
@@ -116,7 +144,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               <FormMessage />
               <Link
                 to='/forgot-password'
-                className='text-muted-foreground absolute -top-0.5 right-0 text-sm font-medium hover:opacity-75'
+                className='text-muted-foreground absolute end-0 -top-0.5 text-sm font-medium hover:opacity-75'
               >
                 Forgot password?
               </Link>
@@ -124,7 +152,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           )}
         />
         <Button className='mt-2' disabled={isLoading}>
-          Login
+          {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+          Sign in
         </Button>
 
         <div className='relative my-2'>
@@ -140,10 +169,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
         <div className='grid grid-cols-2 gap-2'>
           <Button variant='outline' type='button' disabled={isLoading}>
-            <IconBrandGithub className='h-4 w-4' /> GitHub
+            <IconGithub className='h-4 w-4' /> GitHub
           </Button>
           <Button variant='outline' type='button' disabled={isLoading}>
-            <IconBrandFacebook className='h-4 w-4' /> Facebook
+            <IconFacebook className='h-4 w-4' /> Facebook
           </Button>
         </div>
       </form>

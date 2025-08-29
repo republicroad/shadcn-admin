@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 
-interface Props {
+type DatePickerProps = {
   selected: Date | undefined
   onSelect: (date: Date | undefined) => void
   placeholder?: string
@@ -18,21 +18,21 @@ export function DatePicker({
   selected,
   onSelect,
   placeholder = 'Pick a date',
-}: Props) {
+}: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant='outline'
           data-empty={!selected}
-          className='data-[empty=true]:text-muted-foreground w-[240px] justify-start text-left font-normal'
+          className='data-[empty=true]:text-muted-foreground w-[240px] justify-start text-start font-normal'
         >
           {selected ? (
             format(selected, 'MMM d, yyyy')
           ) : (
             <span>{placeholder}</span>
           )}
-          <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+          <CalendarIcon className='ms-auto h-4 w-4 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-auto p-0'>

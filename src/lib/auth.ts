@@ -12,6 +12,7 @@ export function setAuthToken(jwtToken: string) {
     localStorage.setItem('authToken', jwtToken); 
     localStorage.setItem('authTokenUsername', userJwt.username); 
     localStorage.setItem('authTokenExp', userJwt.exp.toString()); 
+    return userJwt;
 }
 
 export const signOut = () => {

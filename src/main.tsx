@@ -8,13 +8,15 @@ import {
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { useAuthStore } from '@/stores/authStore'
-import { handleServerError } from '@/utils/handle-server-error'
-import { FontProvider } from './context/font-context'
-import { ThemeProvider } from './context/theme-context'
-import './index.css'
+import { useAuthStore } from '@/stores/auth-store'
+import { handleServerError } from '@/lib/handle-server-error'
+import { DirectionProvider } from './context/direction-provider'
+import { FontProvider } from './context/font-provider'
+import { ThemeProvider } from './context/theme-provider'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
+// Styles
+import './styles/index.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,23 +84,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-// // Render the app
-// const rootElement = document.getElementById('root')!
-// if (!rootElement.innerHTML) {
-//   const root = ReactDOM.createRoot(rootElement)
-//   root.render(
-//     <StrictMode>
-//       <QueryClientProvider client={queryClient}>
-//         <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-//           <FontProvider>
-//             <RouterProvider router={router} />
-//           </FontProvider>
-//         </ThemeProvider>
-//       </QueryClientProvider>
-//     </StrictMode>
-//   )
-// }
-
 async function enableMocking() {
   if (process.env.NODE_ENV !== 'development') {
     return
@@ -119,9 +104,11 @@ enableMocking().then(() => {
     root.render(
       <StrictMode>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+          <ThemeProvider>
             <FontProvider>
-              <RouterProvider router={router} />
+              <DirectionProvider>
+                  <RouterProvider router={router} />
+              </DirectionProvider>
             </FontProvider>
           </ThemeProvider>
         </QueryClientProvider>
