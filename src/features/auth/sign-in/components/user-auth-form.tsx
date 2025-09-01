@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
-import { setAuthToken } from '@/lib/auth';
+import { jwtDecode } from 'jwt-decode'
 
 
 const formSchema = z.object({
@@ -74,7 +74,12 @@ export function UserAuthForm({
       // Store token/user data in local storage or context if needed
       if (data.status == 0){
         // alert(data.message);
-        const { username } = setAuthToken(data.data.accessToken);
+        const  { username }: {
+                                username: string;
+                                user_id: string;
+                                exp: number;
+                                roles?: string[];
+                              } = jwtDecode(data.data.accessToken);
         // Set user and access token
         const user = {
           accountNo: username,
@@ -83,8 +88,9 @@ export function UserAuthForm({
           exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
         }
         auth.setUser(user);
-        // AccessToken 会存在 cookie 中携带, 是否把sessionid放在jwt(accessToken)中返回?
-        auth.setAccessToken(data.data.accessToken)
+        // console.log("auth.setUser return:", useAuthStore.getState().auth.user);
+        auth.setAccessToken(data.data.accessToken);
+
         // Redirect to the stored location or default to dashboard
         const targetPath = redirectTo || '/'
         navigate({ to: targetPath, replace: true })

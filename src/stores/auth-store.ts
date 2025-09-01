@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware';
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
 
 const ACCESS_TOKEN = 'brdeUser'
@@ -21,7 +22,7 @@ interface AuthState {
   }
 }
 
-export const useAuthStore = create<AuthState>()((set) => {
+export const useAuthStore = create<AuthState>()(persist((set) => {
   const cookieState = getCookie(ACCESS_TOKEN)
   const initToken = cookieState ? JSON.parse(cookieState) : ''
   return {
@@ -50,4 +51,5 @@ export const useAuthStore = create<AuthState>()((set) => {
         }),
     },
   }
-})
+},{name: 'auth-store'})
+)

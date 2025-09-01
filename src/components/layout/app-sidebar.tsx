@@ -11,9 +11,20 @@ import { sidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
+import { useAuthStore } from '@/stores/auth-store'
+import { SidebarData } from '@/components/layout/types'
+
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
+  const { auth } = useAuthStore()
+  const user: SidebarData["user"] = {
+                                      name: auth.user?.email ?? "",
+                                      email: auth.user?.email ?? "",
+                                      avatar: ""
+                                    }
+  sidebarData.user = user;
+  // console.log("_authenticated beforeLoad:", useAuthStore.getState().auth.user);
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>

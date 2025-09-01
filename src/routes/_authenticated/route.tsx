@@ -1,12 +1,14 @@
-import { createFileRoute, redirect, useLocation } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
-import { isAuthenticated } from '@/lib/auth'; // A function to check auth status
+import { useAuthStore } from '@/stores/auth-store'
 
 export const Route = createFileRoute('/_authenticated')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({}) => {
     // console.log('Current location:', location);
     // console.log('Current path:', location.pathname);
-    if (!isAuthenticated()) {
+    const user = useAuthStore.getState().auth.user;
+    console.log("_authenticated beforeLoad:", useAuthStore.getState().auth.user);
+    if (!user) {  // todo: 还要检测过期时间
       throw redirect({ to: '/sign-in' }); // Redirect to login if not authenticated
     }
   },
