@@ -6,7 +6,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
-import { useAuthStore } from '@/stores/auth-store'
+// import { useAuthStore } from '@/stores/auth-store'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,7 +22,7 @@ import { PasswordInput } from '@/components/password-input'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
-
+import { useAuthStore } from '@/stores/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -57,8 +57,7 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { auth } = useAuthStore()
-
+  const { setUser, setAccessToken } = useAuthStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,9 +86,9 @@ export function UserAuthForm({
           role: ['user'],
           exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
         }
-        auth.setUser(user);
-        // console.log("auth.setUser return:", useAuthStore.getState().auth.user);
-        auth.setAccessToken(data.data.accessToken);
+        setUser(user);
+        setAccessToken(data.data.accessToken);
+        console.log("useAuthStore.getState().user:", useAuthStore.getState().user);
 
         // Redirect to the stored location or default to dashboard
         const targetPath = redirectTo || '/'

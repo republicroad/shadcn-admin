@@ -13,12 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/sign-out-dialog'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/stores/auth'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
-  const { auth } = useAuthStore()
-  const user = auth.user;
+  const { user } = useAuthStore()
 
   return (
     <>

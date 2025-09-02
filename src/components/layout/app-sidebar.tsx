@@ -11,20 +11,20 @@ import { sidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/stores/auth'
 import { SidebarData } from '@/components/layout/types'
 
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
-  const { auth } = useAuthStore()
+  const { user:authUser } = useAuthStore()
   const user: SidebarData["user"] = {
-                                      name: auth.user?.email ?? "",
-                                      email: auth.user?.email ?? "",
-                                      avatar: ""
+                                      name: authUser?.email ?? "",
+                                      email: authUser?.email ?? "",
+                                      avatar: ""  // todo, 考虑 avatrar 结构.
                                     }
   sidebarData.user = user;
-  // console.log("_authenticated beforeLoad:", useAuthStore.getState().auth.user);
+  // console.log("_authenticated beforeLoad:", useAuthStore.getState().user);
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>

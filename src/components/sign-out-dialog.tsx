@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+// import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useAuthStore } from '@/stores/auth'
 
 interface SignOutDialogProps {
   open: boolean
@@ -10,18 +11,13 @@ interface SignOutDialogProps {
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const { auth } = useAuthStore()
+  const { reset } = useAuthStore()
 
   const handleSignOut = () => {
     try {
-      useAuthStore.getState().auth.reset()
+      reset();
     } catch (error) {
-      console.log("auth.reset error:", error);
-      console.log("useAuthStore.getState():", useAuthStore.getState());
-      console.log("typeof auth", typeof auth);
-      console.log("auth", auth);
-      console.log("typeof auth.reset", typeof auth.reset);
-      console.log(auth.reset);
+      console.log("请清除localstorage")
     }
     // Preserve current location for redirect after sign-in
     const currentPath = location.href
