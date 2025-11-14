@@ -3,7 +3,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import Terminal from 'vite-plugin-terminal';
+import Terminal from 'vite-plugin-terminal'
+
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,10 +15,7 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
-    Terminal({
-              console: 'terminal', // Redirects console.log from browser to terminal
-              // You can also specify other options like 'output' to control where logs appear
-            }),
+    Terminal(),  //{console: 'terminal'}
   ],
   resolve: {
     alias: {

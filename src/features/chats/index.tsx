@@ -53,7 +53,7 @@ export function Chats() {
   });
   const conversations = data ?? [];
   // Filtered data based on the search query
-  const filteredChatList = conversations.filter(({ fullName }) =>
+  const filteredChatList = conversations.filter(({ fullName }:any) =>
     fullName.toLowerCase().includes(search.trim().toLowerCase())
   )
 
@@ -74,7 +74,7 @@ export function Chats() {
     {}
   )
 
-  const users = conversations.map(({ messages, ...user }) => user)
+  const users = conversations.map(({ messages, ...user }: any) => user)
 
   return (
     <>
@@ -128,7 +128,7 @@ export function Chats() {
             </div>
 
             <ScrollArea className='-mx-3 h-full overflow-scroll p-3'>
-              {filteredChatList.map((chatUsr) => {
+              {filteredChatList.map((chatUsr: any) => {
                 const { id, profile, username, messages, fullName } = chatUsr
                 const lastConvo = messages[0]
                 const lastMsg =
