@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { Database } from 'bun:sqlite';
-import { employees } from '../src/db/schema';
+import { employees } from '../src/db/sqlite/schema';
 import path from 'path';
 
 const filepath = path.join(__dirname, '../chinook.db');

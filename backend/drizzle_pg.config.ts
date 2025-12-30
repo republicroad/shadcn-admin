@@ -1,0 +1,28 @@
+import { defineConfig } from "drizzle-kit";
+import { drizzle } from 'drizzle-orm/bun-sql';
+// 注意, drizzle-kit 不支持 postgresql 12 以下的版本
+// https://github.com/drizzle-team/drizzle-orm/issues/3684#issuecomment-2677743082
+
+export default defineConfig({
+  dialect: "postgresql", // or 'mysql' | 'sqlite' | 'postgresql'
+  schema: './src/db/pg/schema.ts',
+  out: "./drizzle_pg", // Folder where generated files will be saved
+  dbCredentials: {
+    host: "192.168.0.59",
+    port: 5439,
+    user: "postgres",
+    password: "123qwe",
+    database: "brde_db",
+    ssl: false, // can be boolean | "require" | "allow" | "prefer" | "verify-full" | options from node:tls
+  },  // url: "postgresql://postgres:123qwe@192.168.0.59:5439/brde_db"
+
+});
+
+// export default defineConfig({
+//   dialect: "postgresql",
+//   schema: './src/db/schema_pg.ts',
+//   out: "./drizzle_pg", // Folder where generated files will be saved
+//   dbCredentials: {
+//     url: "postgresql://postgres:123qwe@192.168.0.59:5439/brde_db", // "postgres://user:password@host:port/db",
+//   }
+// });
