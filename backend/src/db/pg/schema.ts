@@ -40,6 +40,7 @@ export const brdeUser = pgTable("brde_user", {
 	id: varchar().primaryKey().notNull(),
 	userKey: varchar("user_key").notNull(),
 	username: varchar().notNull(),
+	password: varchar().notNull().default(''),
 	hashedPassword: varchar("hashed_password").notNull(),
 	salt: varchar().notNull(),
 	createTime: timestamp("create_time", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),

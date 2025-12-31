@@ -1,0 +1,1 @@
+ALTER TABLE "brde_user" ADD COLUMN "password" varchar DEFAULT '' NOT NULL;

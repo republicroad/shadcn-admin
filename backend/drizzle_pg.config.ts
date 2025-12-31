@@ -8,14 +8,14 @@ export default defineConfig({
   schema: './src/db/pg/schema.ts',
   out: "./drizzle_pg", // Folder where generated files will be saved
   dbCredentials: {
-    host: "192.168.0.59",
-    port: 5439,
+    host: "10.141.125.66", // "10.141.125.66"  192.168.0.59
+    port: 5432,
     user: "postgres",
-    password: "123qwe",
-    database: "brde_db",
+    password: "fccdjny",  //"123qwe"
+    database: "postgres",
     ssl: false, // can be boolean | "require" | "allow" | "prefer" | "verify-full" | options from node:tls
   },  // url: "postgresql://postgres:123qwe@192.168.0.59:5439/brde_db"
-
+      // url: "postgresql://postgres:fccdjny@10.141.125.66:5432/postgres"
 });
 
 // export default defineConfig({
