@@ -40,7 +40,7 @@ const registerUser = async (credentials: any) => {
   credentials.username = credentials.email  // delete credentials.email
   console.log("registerUser:", credentials);
   // const response = await httpClient.post('/api/login', credentials);
-  const response = await axios.post('/geerule/register', credentials); // Replace with your API endpoint
+  const response = await axios.post('/api/register', credentials); // Replace with your API endpoint
   // const response = await fetch('/api/login', credentials);
   return response.data;
 };

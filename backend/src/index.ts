@@ -7,7 +7,7 @@ const app = new Elysia()
     .use(swagger()) 
     .get('/', ({ path }) => path)
     .post('/hello', 'Do you miss me?')
-    .post('/geerule/login',  ({ path,params }) => [params, path])
+    .post('/api/login',  ({ path,params }) => [params, path])
     .get('/user/:id', ({ params: { id } }) => { return {id:id} }, {
         params: t.Object({
             id: t.Number()

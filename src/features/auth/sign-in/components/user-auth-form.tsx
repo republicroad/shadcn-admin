@@ -39,7 +39,7 @@ const loginUser = async (credentials: any) => {
   console.log("loginUser:", credentials);
   // import httpClient from '../../../../api/api'
   // const response = await httpClient.post('/api/login', credentials);
-  const response = await axios.post('/geerule/login', credentials); // Replace with your API endpoint
+  const response = await axios.post('/api/login', credentials); // Replace with your API endpoint
   // const response = await fetch('/api/login', credentials);
   // console.log("response:", response);
   // console.log("response.data:", response.data);  

@@ -6,10 +6,10 @@ import { conversations } from '../features/chats/data/convo.json'
 // import data1 from '../features/chats/data/convo.json' with { type: 'json' }
 
 export const handlers = [
-  http.post('geerule/login', async ({ request }) => {
-        const requestBody = await request.json();
-        return HttpResponse.json(fake_user_login_jwt(requestBody));
-  }),
+  // http.post('/api/login', async ({ request }) => {
+  //       const requestBody = await request.json();
+  //       return HttpResponse.json(fake_user_login_jwt(requestBody));
+  // }),
   http.all('/api/users', async ({ request }) => {
         // const requestBody = await request.json();
         return HttpResponse.json(users);

@@ -5,6 +5,35 @@ import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import Terminal from 'vite-plugin-terminal'
 
+function viteProxyRequestLogger(proxyReq:any, req:any, res:any) {
+    let body = '';
+    // Collect the data chunks from the request
+    req.on('data', (chunk:any) => {
+      body += chunk;
+    });
+    req.on('end', () => {
+      console.log('Proxy Request:', req.method, req.url);
+      console.log('--- Request Headers ---');
+      console.log(proxyReq.getHeaders());
+      console.log('--- Request Body ---');
+      console.log(body);
+    });
+}
+
+function viteProxyResponesLogger(proxyRes:any, req:any, res:any) {
+    let body: any = [];
+    proxyRes.on('data', (chunk:any) => {
+      body.push(chunk);
+    });
+    proxyRes.on('end', () => {
+      body = Buffer.concat(body).toString();
+      console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
+      console.log('--- Response Headers ---');
+      console.log(proxyRes.headers);
+      console.log('--- Response Body ---');
+      console.log(body);
+    });
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -28,6 +57,19 @@ export default defineConfig({
         target: 'http://localhost:8000', // Backend server
         changeOrigin: true, // Ensure the request appears to come from the frontend server
         // rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove '/api' prefix
+        configure: (proxy, options) => {
+          // Log incoming requests to the proxy
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            viteProxyRequestLogger(proxyReq, req, res)
+          });
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            viteProxyResponesLogger(proxyRes, req, res)
+          });
+          // Log errors during proxying
+          proxy.on('error', (err, req, res) => {
+            console.error('Proxy Error:', err.message, req.url);
+          });
+        },
       },
       '/geerule': {
         target: 'http://localhost:8000', // Backend server
@@ -36,28 +78,11 @@ export default defineConfig({
         configure: (proxy, options) => {
           // Log incoming requests to the proxy
           proxy.on('proxyReq', (proxyReq, req, res) => {
-            // console.log("import.meta.env.VITE_API_URL:", import.meta.env.VITE_API_URL);
-            // console.log("import.meta.env.BASE_URL:", import.meta.env.BASE_URL);
-            console.log('Proxy Request:', req.method, req.url);
-            // You can also log headers or body if needed:
-            // console.log('Request Headers:', proxyReq.getHeaders());
-            // console.log('Request Bodys:', req.body);`
+            viteProxyRequestLogger(proxyReq, req, res)
           });
           proxy.on('proxyRes', (proxyRes, req, res) => {
-            console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
-            // console.log('Response Headers:', proxyRes.headers);
-            // let body: any = [];
-            // proxyRes.on('data', (chunk) => {
-            //   body.push(chunk);
-            // });
-            // proxyRes.on('end', () => {
-            //   body = Buffer.concat(body).toString();
-            //   console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
-            //   console.log('Response Headers:', proxyRes.headers);
-            //   console.log(`Proxy Response Body for ${req.url}:`, body);
-            // });
+            viteProxyResponesLogger(proxyRes, req, res)
           });
-
           // Log errors during proxying
           proxy.on('error', (err, req, res) => {
             console.error('Proxy Error:', err.message, req.url);

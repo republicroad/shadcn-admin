@@ -144,3 +144,27 @@ sudo -u postgres createdb $USER
 CREATE USER myuser WITH PASSWORD 'mypassword';
 ALTER  USER myuser WITH PASSWORD 'new_secure_password';
 ```
+
+### 删除schema下所有的表
+
+1. 最佳实践
+
+进入 psql，执行下列命令会删除 public schema下所有的表:
+```sql
+SELECT format('DROP TABLE IF EXISTS %I.%I CASCADE;', schemaname, tablename) 
+FROM pg_tables 
+WHERE schemaname = 'public'; \gexec
+```
+不输入后面的 \gexec 就是查看待执行的删除表的语句.
+
+2. 删除schema后再创建
+
+```bash
+-- Replace 'public' with your schema name if different
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+-- Restore standard permissions for the public schema if needed
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+```
