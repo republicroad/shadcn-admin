@@ -29,8 +29,8 @@ import { type User } from '../data/schema'
 
 const formSchema = z
   .object({
-    firstName: z.string().min(1, 'First Name is required.'),
-    lastName: z.string().min(1, 'Last Name is required.'),
+    // firstName: z.string().min(1, 'First Name is required.'),
+    // lastName: z.string().min(1, 'Last Name is required.'),
     username: z.string().min(1, 'Username is required.'),
     phoneNumber: z.string().min(1, 'Phone number is required.'),
     email: z.email({
@@ -115,8 +115,8 @@ export function UsersActionDialog({
           isEdit,
         }
       : {
-          firstName: '',
-          lastName: '',
+          // firstName: '',
+          // lastName: '',
           username: '',
           email: '',
           role: '',
@@ -131,6 +131,7 @@ export function UsersActionDialog({
     form.reset()
     showSubmittedData(values)
     onOpenChange(false)
+    console.log('Submitted data:', values)
   }
 
   const isPasswordTouched = !!form.formState.dirtyFields.password
@@ -158,7 +159,7 @@ export function UsersActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name='firstName'
                 render={({ field }) => (
@@ -197,7 +198,7 @@ export function UsersActionDialog({
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name='username'

@@ -30,7 +30,8 @@ export function Users() {
   });
   // data is undefined initially because the query is still in the process of fetching data.
   // data 可能返回 undefined
-  const users = data ?? [];
+  // data: {"status":0,"data": users}
+  const users = data?.data ?? [];
 
   return (
     <UsersProvider>

@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles } from '../data/data'
+import { roles, userStatus } from '../data/data'
 import { type User } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
@@ -60,6 +60,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
       { columnId: 'username', searchKey: 'username', type: 'string' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: 'role', searchKey: 'role', type: 'array' },
+      // { columnId: 'phoneNumber', searchKey: 'phoneNumber', type: 'string' }
     ],
   })
 
@@ -107,12 +108,14 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
           {
             columnId: 'status',
             title: 'Status',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
-            ],
+            options: userStatus.map((status) => ({ ...status })),
+            // [
+            //   { label: 'Initializing', value: 'initializing' },
+            //   { label: 'Active', value: 'active' },
+            //   { label: 'Inactive', value: 'inactive' },
+            //   { label: 'Invited', value: 'invited' },
+            //   { label: 'Suspended', value: 'suspended' },
+            // ],
           },
           {
             columnId: 'role',
