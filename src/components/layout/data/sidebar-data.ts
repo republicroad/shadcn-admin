@@ -55,14 +55,44 @@ export const sidebarData: SidebarData = {
       title: 'General',
       items: [
         {
-          title: 'Dashboard',
+          title: '仪表盘',
           url: '/',
           icon: LayoutDashboard,
+        },        
+        {
+          title: '用户',
+          url: '/users',
+          icon: Users,
+        },
+       {
+          title: '项目',
+          url: '/projects',
+          icon: ProjectorIcon,
+        },
+       {
+          title: '规则',
+          url: '/rules',
+          icon: RulerIcon,
         },
         {
-          title: '工单',
-          url: '/tasks',
-          icon: ListTodo,
+          title: '花名册',
+          url: '/rosters',
+          // icon: ListTodo,
+        },
+        {
+          title: '通知',
+          url: '/notifications',
+          // icon: ListTodo,
+        },
+        {
+          title: '共享计数器',
+          url: '/shareCounters',
+          // icon: ListTodo,
+        },
+        {
+          title: '时间累加器',
+          url: '/indicators',
+          // icon: ListTodo,
         },
         {
           title: 'Apps',
@@ -75,21 +105,7 @@ export const sidebarData: SidebarData = {
         //   badge: '3',
         //   icon: MessagesSquare,
         // },
-        {
-          title: 'Users',
-          url: '/users',
-          icon: Users,
-        },
-       {
-          title: 'Projects',
-          url: '/projects',
-          icon: ProjectorIcon,
-        },
-       {
-          title: 'Rules',
-          url: '/rules',
-          icon: RulerIcon,
-        },
+
         // {
         //   title: 'Secured by Clerk',
         //   icon: ClerkLogo,
@@ -216,6 +232,21 @@ export const sidebarData: SidebarData = {
         //   icon: HelpCircle,
         // },
       ],
+    },
+    {
+      title: 'Docs',
+      items: [
+        {
+          title: '编辑器',
+          url: '/editors',
+          // icon: LayoutDashboard,
+        },        
+        {
+          title: '表达式',
+          url: '/zen-expressions',
+          // icon: Users,
+        },
+      ]
     },
   ],
 }
