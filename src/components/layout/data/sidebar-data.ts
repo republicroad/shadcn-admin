@@ -23,9 +23,13 @@ import {
   GalleryVerticalEnd,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
-import { type SidebarData } from '../types'
+// import { type SidebarData } from '../types'
 
-export const sidebarData: SidebarData = {
+import { useTranslation } from 'react-i18next';
+
+export function useSidebarData() {
+  const { t } = useTranslation("sidebar");
+  return {
   user: {
     name: 'satnaing',
     email: 'satnaingdev@gmail.com',
@@ -50,48 +54,48 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: 'General',
+      title: t('general'),
       items: [
         {
-          title: 'Dashboard',
+          title: t('dashboard'),
           url: '/',
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
+          title: t('tasks'),
           url: '/tasks',
           icon: ListTodo,
         },
         {
-          title: 'Apps',
+          title: t('apps'),
           url: '/apps',
           icon: Package,
         },
         {
-          title: 'Chats',
+          title: t('chats'),
           url: '/chats',
           badge: '3',
           icon: MessagesSquare,
         },
         {
-          title: 'Users',
+          title: t('users'),
           url: '/users',
           icon: Users,
         },
         {
-          title: 'Secured by Clerk',
+          title: t('secured by clerk'),
           icon: ClerkLogo,
           items: [
             {
-              title: 'Sign In',
+              title: t('sign in'),
               url: '/clerk/sign-in',
             },
             {
-              title: 'Sign Up',
+              title: t('sign up'),
               url: '/clerk/sign-up',
             },
             {
-              title: 'User Management',
+              title: t('user management'),
               url: '/clerk/user-management',
             },
           ],
@@ -99,60 +103,60 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'Pages',
+      title: t('pages'),
       items: [
         {
-          title: 'Auth',
+          title: t('auth'),
           icon: ShieldCheck,
           items: [
             {
-              title: 'Sign In',
+              title: t('sign in'),
               url: '/sign-in',
             },
             {
-              title: 'Sign In (2 Col)',
+              title: t('sign in (2 col)'),
               url: '/sign-in-2',
             },
             {
-              title: 'Sign Up',
+              title: t('sign up'),
               url: '/sign-up',
             },
             {
-              title: 'Forgot Password',
+              title: t('forgot password'),
               url: '/forgot-password',
             },
             {
-              title: 'OTP',
+              title: t('otp'),
               url: '/otp',
             },
           ],
         },
         {
-          title: 'Errors',
+          title: t('errors'),
           icon: Bug,
           items: [
             {
-              title: 'Unauthorized',
+              title: t('unauthorized'),
               url: '/errors/unauthorized',
               icon: Lock,
             },
             {
-              title: 'Forbidden',
+              title: t('forbidden'),
               url: '/errors/forbidden',
               icon: UserX,
             },
             {
-              title: 'Not Found',
+              title: t('notFound'),
               url: '/errors/not-found',
               icon: FileX,
             },
             {
-              title: 'Internal Server Error',
+              title: t('internalServerError'),
               url: '/errors/internal-server-error',
               icon: ServerOff,
             },
             {
-              title: 'Maintenance Error',
+              title: t('maintenanceError'),
               url: '/errors/maintenance-error',
               icon: Construction,
             },
@@ -161,45 +165,46 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'Other',
+      title: t('other'),
       items: [
         {
-          title: 'Settings',
+          title: t('settings'),
           icon: Settings,
           items: [
             {
-              title: 'Profile',
+              title: t('profile'),
               url: '/settings',
               icon: UserCog,
             },
             {
-              title: 'Account',
+              title: t('account'),
               url: '/settings/account',
               icon: Wrench,
             },
             {
-              title: 'Appearance',
+              title: t('appearance'),
               url: '/settings/appearance',
               icon: Palette,
             },
             {
-              title: 'Notifications',
+              title: t('notifications'),
               url: '/settings/notifications',
               icon: Bell,
             },
             {
-              title: 'Display',
+              title: t('display'),
               url: '/settings/display',
               icon: Monitor,
             },
           ],
         },
         {
-          title: 'Help Center',
+          title: t('helpCenter'),
           url: '/help-center',
           icon: HelpCircle,
         },
       ],
     },
   ],
+}
 }

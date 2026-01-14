@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { AxiosError } from 'axios'
+
 import {
   QueryCache,
   QueryClient,
@@ -17,7 +18,7 @@ import { ThemeProvider } from './context/theme-provider'
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
-
+import './locales/i18n';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
