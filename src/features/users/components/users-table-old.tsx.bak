@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   type SortingState,
   type VisibilityState,
-  type RowSelectionState,
-  type ColumnFiltersState,
-  type PaginationState,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Table,
   TableBody,
@@ -22,44 +22,51 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { userService, type SysUser } from '@/services'
-import { usersColumns } from './users-columns'
+import { roles } from '../data/data'
+import { type User } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
+import { usersColumns as columns } from './users-columns'
 
-export function UsersTable() {
-  const [data, setData] = useState<SysUser[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+type DataTableProps = {
+  data: User[]
+  search: Record<string, unknown>
+  navigate: NavigateFn
+}
+
+export function UsersTable({ data, search, navigate }: DataTableProps) {
+  // Local UI-only states
+  const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const result = await userService.getUserList({
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-      })
-      setData(result.list)
-      setTotal(result.total)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Local state management for table (uncomment to use local-only state, not synced with URL)
+  // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
+  // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  useEffect(() => {
-    fetchData()
-  }, [pagination])
+  // Synced with URL states (keys/defaults mirror users route search schema)
+  const {
+    columnFilters,
+    onColumnFiltersChange,
+    pagination,
+    onPaginationChange,
+    ensurePageInRange,
+  } = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: false },
+    columnFilters: [
+      // username per-column text filter
+      { columnId: 'username', searchKey: 'username', type: 'string' },
+      { columnId: 'status', searchKey: 'status', type: 'array' },
+      { columnId: 'role', searchKey: 'role', type: 'array' },
+    ],
+  })
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
-    columns: usersColumns,
-    pageCount: Math.ceil(total / pagination.pageSize),
+    columns,
     state: {
       sorting,
       pagination,
@@ -68,8 +75,8 @@ export function UsersTable() {
       columnVisibility,
     },
     enableRowSelection: true,
-    onPaginationChange: setPagination,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange,
+    onColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
@@ -77,15 +84,42 @@ export function UsersTable() {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    manualPagination: true,
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  useEffect(() => {
+    ensurePageInRange(table.getPageCount())
+  }, [table, ensurePageInRange])
+
   return (
-    <div className={cn('flex flex-1 flex-col gap-4')}>
+    <div
+      className={cn(
+        'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
+        'flex flex-1 flex-col gap-4'
+      )}
+    >
       <DataTableToolbar
         table={table}
         searchPlaceholder='Filter users...'
-        searchKey='userName'
+        searchKey='username'
+        filters={[
+          {
+            columnId: 'status',
+            title: 'Status',
+            options: [
+              { label: 'Active', value: 'active' },
+              { label: 'Inactive', value: 'inactive' },
+              { label: 'Invited', value: 'invited' },
+              { label: 'Suspended', value: 'suspended' },
+            ],
+          },
+          {
+            columnId: 'role',
+            title: 'Role',
+            options: roles.map((role) => ({ ...role })),
+          },
+        ]}
       />
       <div className='overflow-hidden rounded-md border'>
         <Table>
@@ -116,13 +150,7 @@ export function UsersTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={usersColumns.length} className='h-24 text-center'>
-                  Loading...
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -149,7 +177,7 @@ export function UsersTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={usersColumns.length}
+                  colSpan={columns.length}
                   className='h-24 text-center'
                 >
                   No results.

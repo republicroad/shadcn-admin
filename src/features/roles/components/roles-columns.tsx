@@ -4,15 +4,11 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { type SysUser } from '@/services'
+import { statuses } from '../data/data'
+import { type Role } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-const statuses = [
-  { value: '0', label: 'Normal', color: 'text-green-600' },
-  { value: '1', label: 'Disabled', color: 'text-red-600' },
-]
-
-export const usersColumns: ColumnDef<SysUser>[] = [
+export const rolesColumns: ColumnDef<Role>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -38,20 +34,16 @@ export const usersColumns: ColumnDef<SysUser>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'userId',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
-    ),
-    cell: ({ row }) => <div className='w-16'>{row.getValue('userId')}</div>,
+    accessorKey: 'roleId',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='ID' />,
+    cell: ({ row }) => <div className='w-16'>{row.getValue('roleId')}</div>,
     enableHiding: false,
   },
   {
-    accessorKey: 'userName',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Username' />
-    ),
+    accessorKey: 'roleName',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Role Name' />,
     cell: ({ row }) => (
-      <LongText className='max-w-36 ps-3'>{row.getValue('userName')}</LongText>
+      <LongText className='max-w-36 ps-3'>{row.getValue('roleName')}</LongText>
     ),
     meta: {
       className: cn(
@@ -61,40 +53,22 @@ export const usersColumns: ColumnDef<SysUser>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'nickName',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nick Name' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-36'>{row.getValue('nickName')}</LongText>
-    ),
+    accessorKey: 'roleKey',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Role Key' />,
+    cell: ({ row }) => <LongText className='max-w-36'>{row.getValue('roleKey')}</LongText>,
   },
   {
-    accessorKey: 'email',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-48'>{row.getValue('email') || '-'}</LongText>
-    ),
-  },
-  {
-    accessorKey: 'phonenumber',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Phone' />
-    ),
-    cell: ({ row }) => <div>{row.getValue('phonenumber') || '-'}</div>,
-    enableSorting: false,
+    accessorKey: 'roleSort',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Sort' />,
+    cell: ({ row }) => <div>{row.getValue('roleSort')}</div>,
   },
   {
     accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Status' />,
     cell: ({ row }) => {
       const status = statuses.find((s) => s.value === row.getValue('status'))
       return (
-        <Badge variant='outline' className={cn('capitalize', status?.color)}>
+        <Badge variant='outline' className={cn('capitalize')}>
           {status?.label || row.getValue('status')}
         </Badge>
       )
@@ -102,14 +76,11 @@ export const usersColumns: ColumnDef<SysUser>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
-    enableHiding: false,
     enableSorting: false,
   },
   {
     accessorKey: 'createTime',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Create Time' />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Create Time' />,
     cell: ({ row }) => {
       const date = row.getValue('createTime') as string
       return <div className='text-nowrap'>{date ? new Date(date).toLocaleString() : '-'}</div>

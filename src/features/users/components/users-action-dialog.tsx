@@ -1,9 +1,9 @@
 'use client'
 
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,21 +24,26 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
-import { type User } from '../data/schema'
+import { type SysUser, userService } from '@/services'
+import { toast } from 'sonner'
+
+const statuses = [
+  { value: '0', label: 'Normal' },
+  { value: '1', label: 'Disabled' },
+]
 
 const formSchema = z
   .object({
-    firstName: z.string().min(1, 'First Name is required.'),
-    lastName: z.string().min(1, 'Last Name is required.'),
-    username: z.string().min(1, 'Username is required.'),
-    phoneNumber: z.string().min(1, 'Phone number is required.'),
-    email: z.email({
-      error: (iss) => (iss.input === '' ? 'Email is required.' : undefined),
-    }),
+    userName: z.string().min(1, 'Username is required.'),
+    nickName: z.string().min(1, 'Nick name is required.'),
+    email: z.string().email().optional().or(z.literal('')),
+    phonenumber: z.string().optional(),
+    sex: z.string().optional(),
     password: z.string().transform((pwd) => pwd.trim()),
-    role: z.string().min(1, 'Role is required.'),
     confirmPassword: z.string().transform((pwd) => pwd.trim()),
+    status: z.string().optional(),
+    deptId: z.number().optional(),
+    remark: z.string().optional(),
     isEdit: z.boolean(),
   })
   .refine(
@@ -54,30 +59,10 @@ const formSchema = z
   .refine(
     ({ isEdit, password }) => {
       if (isEdit && !password) return true
-      return password.length >= 8
+      return password.length >= 6
     },
     {
-      message: 'Password must be at least 8 characters long.',
-      path: ['password'],
-    }
-  )
-  .refine(
-    ({ isEdit, password }) => {
-      if (isEdit && !password) return true
-      return /[a-z]/.test(password)
-    },
-    {
-      message: 'Password must contain at least one lowercase letter.',
-      path: ['password'],
-    }
-  )
-  .refine(
-    ({ isEdit, password }) => {
-      if (isEdit && !password) return true
-      return /\d/.test(password)
-    },
-    {
-      message: 'Password must contain at least one number.',
+      message: 'Password must be at least 6 characters long.',
       path: ['password'],
     }
   )
@@ -91,46 +76,106 @@ const formSchema = z
       path: ['confirmPassword'],
     }
   )
+
 type UserForm = z.infer<typeof formSchema>
 
 type UserActionDialogProps = {
-  currentRow?: User
+  currentRow?: SysUser
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSuccess?: () => void
 }
 
 export function UsersActionDialog({
   currentRow,
   open,
   onOpenChange,
+  onSuccess,
 }: UserActionDialogProps) {
   const isEdit = !!currentRow
+
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEdit
-      ? {
-          ...currentRow,
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        }
-      : {
-          firstName: '',
-          lastName: '',
-          username: '',
-          email: '',
-          role: '',
-          phoneNumber: '',
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        },
+    defaultValues: {
+      userName: '',
+      nickName: '',
+      email: '',
+      phonenumber: '',
+      sex: '0',
+      password: '',
+      confirmPassword: '',
+      status: '0',
+      deptId: 0,
+      remark: '',
+      isEdit: false,
+    },
   })
 
-  const onSubmit = (values: UserForm) => {
-    form.reset()
-    showSubmittedData(values)
-    onOpenChange(false)
+  useEffect(() => {
+    if (currentRow) {
+      form.reset({
+        userName: currentRow.userName,
+        nickName: currentRow.nickName,
+        email: currentRow.email || '',
+        phonenumber: currentRow.phonenumber || '',
+        sex: currentRow.sex || '0',
+        password: '',
+        confirmPassword: '',
+        status: currentRow.status || '0',
+        deptId: currentRow.deptId || 0,
+        remark: currentRow.remark || '',
+        isEdit: true,
+      })
+    } else {
+      form.reset({
+        userName: '',
+        nickName: '',
+        email: '',
+        phonenumber: '',
+        sex: '0',
+        password: '',
+        confirmPassword: '',
+        status: '0',
+        deptId: 0,
+        remark: '',
+        isEdit: false,
+      })
+    }
+  }, [currentRow, form])
+
+  const onSubmit = async (data: UserForm) => {
+    try {
+      if (isEdit && currentRow) {
+        await userService.updateUser(currentRow.userId, {
+          nickName: data.nickName,
+          email: data.email,
+          phonenumber: data.phonenumber,
+          sex: data.sex,
+          status: data.status,
+          deptId: data.deptId,
+          remark: data.remark,
+        })
+        toast.success('User updated successfully')
+      } else {
+        await userService.createUser({
+          userName: data.userName,
+          nickName: data.nickName,
+          email: data.email,
+          phonenumber: data.phonenumber,
+          sex: data.sex,
+          password: data.password,
+          status: data.status,
+          deptId: data.deptId,
+          remark: data.remark,
+        })
+        toast.success('User created successfully')
+      }
+      form.reset()
+      onOpenChange(false)
+      onSuccess?.()
+    } catch (error: any) {
+      toast.error(error.response?.data?.msg || 'Operation failed')
+    }
   }
 
   const isPasswordTouched = !!form.formState.dirtyFields.password
@@ -143,7 +188,7 @@ export function UsersActionDialog({
         onOpenChange(state)
       }}
     >
-      <DialogContent className='sm:max-w-lg'>
+      <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-lg'>
         <DialogHeader className='text-start'>
           <DialogTitle>{isEdit ? 'Edit User' : 'Add New User'}</DialogTitle>
           <DialogDescription>
@@ -151,7 +196,7 @@ export function UsersActionDialog({
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
+        <div className='w-[calc(100%+0.75rem)] py-1 pe-3'>
           <Form {...form}>
             <form
               id='user-form'
@@ -160,58 +205,30 @@ export function UsersActionDialog({
             >
               <FormField
                 control={form.control}
-                name='firstName'
+                name='userName'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      First Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='John'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='lastName'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Last Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Doe'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='username'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Username
-                    </FormLabel>
+                    <FormLabel className='col-span-2 text-end'>Username</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='john_doe'
                         className='col-span-4'
+                        disabled={isEdit}
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='nickName'
+                render={({ field }) => (
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>Nick Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder='John Doe' className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -224,11 +241,7 @@ export function UsersActionDialog({
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='john.doe@gmail.com'
-                        className='col-span-4'
-                        {...field}
-                      />
+                      <Input placeholder='john.doe@example.com' className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -236,18 +249,12 @@ export function UsersActionDialog({
               />
               <FormField
                 control={form.control}
-                name='phoneNumber'
+                name='phonenumber'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Phone Number
-                    </FormLabel>
+                    <FormLabel className='col-span-2 text-end'>Phone</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='+123456789'
-                        className='col-span-4'
-                        {...field}
-                      />
+                      <Input placeholder='+1234567890' className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -255,63 +262,62 @@ export function UsersActionDialog({
               />
               <FormField
                 control={form.control}
-                name='role'
+                name='status'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Role</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder='Select a role'
-                      className='col-span-4'
-                      items={roles.map(({ label, value }) => ({
-                        label,
-                        value,
-                      }))}
-                    />
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Password
-                    </FormLabel>
+                    <FormLabel className='col-span-2 text-end'>Status</FormLabel>
                     <FormControl>
-                      <PasswordInput
-                        placeholder='e.g., S3cur3P@ssw0rd'
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder='Select status'
                         className='col-span-4'
-                        {...field}
+                        items={statuses}
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='confirmPassword'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Confirm Password
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        disabled={!isPasswordTouched}
-                        placeholder='e.g., S3cur3P@ssw0rd'
-                        className='col-span-4'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
+              {!isEdit && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name='password'
+                    render={({ field }) => (
+                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                        <FormLabel className='col-span-2 text-end'>Password</FormLabel>
+                        <FormControl>
+                          <PasswordInput
+                            placeholder='e.g., S3cur3P@ssw0rd'
+                            className='col-span-4'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className='col-span-4 col-start-3' />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='confirmPassword'
+                    render={({ field }) => (
+                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                        <FormLabel className='col-span-2 text-end'>Confirm Password</FormLabel>
+                        <FormControl>
+                          <PasswordInput
+                            disabled={!isPasswordTouched}
+                            placeholder='e.g., S3cur3P@ssw0rd'
+                            className='col-span-4'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className='col-span-4 col-start-3' />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
             </form>
           </Form>
         </div>

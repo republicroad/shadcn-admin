@@ -21,6 +21,10 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Shield,
+  Menu,
+  Building2,
+  Briefcase,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 // import { type SidebarData } from '../types'
@@ -81,6 +85,32 @@ export function useSidebarData() {
           title: t('users'),
           url: '/users',
           icon: Users,
+        },
+        {
+          title: t('system'),
+          icon: Settings,
+          items: [
+            {
+              title: t('roles'),
+              url: '/roles',
+              icon: Shield,
+            },
+            {
+              title: t('menus'),
+              url: '/menus',
+              icon: Menu,
+            },
+            {
+              title: t('departments'),
+              url: '/departments',
+              icon: Building2,
+            },
+            {
+              title: t('posts'),
+              url: '/posts',
+              icon: Briefcase,
+            },
+          ],
         },
         {
           title: t('secured by clerk'),
