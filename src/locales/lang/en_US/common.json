@@ -17,6 +17,11 @@
 		"back": "Back",
 
 		"light": "Light",
-		"dark": "Dark"
+		"dark": "Dark",
+
+		"warning": "Warning",
+		"delete": "Delete",
+		"cannotUndo": "This operation cannot be undone",
+		"actions": "Actions"
 	}
 }

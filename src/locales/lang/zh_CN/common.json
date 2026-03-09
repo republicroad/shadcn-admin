@@ -17,6 +17,11 @@
 		"back": "返回",
 
 		"light": "亮色主题",
-		"dark": "黑暗主题"
+		"dark": "黑暗主题",
+
+		"warning": "警告",
+		"delete": "删除",
+		"cannotUndo": "此操作无法撤销",
+		"actions": "操作"
 	}
 }

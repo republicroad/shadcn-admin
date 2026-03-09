@@ -1,0 +1,32 @@
+{
+  "title": "User Management",
+  "description": "Manage system users and their roles here.",
+  "newUser": "New User",
+  "editUser": "Edit User",
+  "deleteUser": "Delete User",
+  "deleteUsers": "Delete Users",
+  "userId": "ID",
+  "userName": "Username",
+  "nickName": "Nick Name",
+  "email": "Email",
+  "phone": "Phone",
+  "status": "Status",
+  "createTime": "Create Time",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "edit": "Edit",
+  "delete": "Delete",
+  "statusNormal": "Normal",
+  "statusDisabled": "Disabled",
+  "errors": {
+    "userAlreadyExists": "This username already exists",
+    "createFailed": "Failed to create user",
+    "updateFailed": "Failed to update user",
+    "deleteFailed": "Failed to delete user"
+  },
+  "success": {
+    "created": "User created successfully",
+    "updated": "User updated successfully",
+    "deleted": "User deleted successfully"
+  }
+}

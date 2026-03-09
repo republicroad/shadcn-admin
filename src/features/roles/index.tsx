@@ -4,10 +4,13 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useTranslation } from 'react-i18next'
 import { RolesPrimaryButtons } from './components/roles-primary-buttons'
 import { RolesTable } from './components/roles-table'
 
 export function Roles() {
+  const { t } = useTranslation('roles')
+
   return (
     <>
       <Header fixed>
@@ -22,9 +25,9 @@ export function Roles() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Role Management</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>{t('title')}</h2>
             <p className='text-muted-foreground'>
-              Manage system roles and their permissions here.
+              {t('description')}
             </p>
           </div>
           <RolesPrimaryButtons />

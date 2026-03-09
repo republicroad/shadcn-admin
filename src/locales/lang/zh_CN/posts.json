@@ -1,0 +1,13 @@
+{
+  "title": "岗位管理",
+  "description": "在此管理组织岗位和职位。",
+  "newPost": "新建岗位",
+  "editPost": "编辑岗位",
+  "deletePost": "删除岗位",
+  "deletePosts": "删除岗位",
+  "postName": "岗位名称",
+  "postCode": "岗位编码",
+  "sort": "排序",
+  "status": "状态",
+  "createTime": "创建时间"
+}

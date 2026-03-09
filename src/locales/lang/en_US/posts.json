@@ -1,0 +1,13 @@
+{
+  "title": "Post Management",
+  "description": "Manage organizational posts and positions here.",
+  "newPost": "New Post",
+  "editPost": "Edit Post",
+  "deletePost": "Delete Post",
+  "deletePosts": "Delete Posts",
+  "postName": "Post Name",
+  "postCode": "Post Code",
+  "sort": "Sort",
+  "status": "Status",
+  "createTime": "Create Time"
+}

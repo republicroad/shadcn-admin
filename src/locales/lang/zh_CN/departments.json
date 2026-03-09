@@ -1,0 +1,14 @@
+{
+  "title": "部门管理",
+  "description": "在此管理组织部门及其结构。",
+  "newDepartment": "新建部门",
+  "editDepartment": "编辑部门",
+  "deleteDepartment": "删除部门",
+  "deptName": "部门名称",
+  "sort": "排序",
+  "leader": "负责人",
+  "phone": "联系电话",
+  "email": "邮箱",
+  "status": "状态",
+  "createTime": "创建时间"
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   type SortingState,
   type VisibilityState,
@@ -23,10 +23,11 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { userService, type SysUser } from '@/services'
-import { usersColumns } from './users-columns'
+import { useUsersColumns } from './users-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
-export function UsersTable() {
+export function UsersTable({ onRefreshChange }: { onRefreshChange?: (refresh: () => void) => void }) {
+  const columns = useUsersColumns()
   const [data, setData] = useState<SysUser[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -36,7 +37,7 @@ export function UsersTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const result = await userService.getUserList({
@@ -50,15 +51,26 @@ export function UsersTable() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [pagination.pageIndex, pagination.pageSize])
 
   useEffect(() => {
     fetchData()
-  }, [pagination])
+  }, [fetchData])
+
+  // 使用 ref 保存最新的 fetchData 函数
+  const fetchDataRef = useRef(fetchData)
+  useEffect(() => {
+    fetchDataRef.current = fetchData
+  }, [fetchData])
+
+  // 只在组件挂载时调用一次 onRefreshChange
+  useEffect(() => {
+    onRefreshChange?.(() => fetchDataRef.current())
+  }, [onRefreshChange])
 
   const table = useReactTable({
     data,
-    columns: usersColumns,
+    columns: columns,
     pageCount: Math.ceil(total / pagination.pageSize),
     state: {
       sorting,
@@ -118,7 +130,7 @@ export function UsersTable() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={usersColumns.length} className='h-24 text-center'>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
                   Loading...
                 </TableCell>
               </TableRow>
@@ -149,7 +161,7 @@ export function UsersTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={usersColumns.length}
+                  colSpan={columns.length}
                   className='h-24 text-center'
                 >
                   No results.
@@ -160,7 +172,7 @@ export function UsersTable() {
         </Table>
       </div>
       <DataTablePagination table={table} className='mt-auto' />
-      <DataTableBulkActions table={table} />
+      <DataTableBulkActions table={table} onSuccess={fetchData} />
     </div>
   )
 }

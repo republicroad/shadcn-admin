@@ -1,0 +1,14 @@
+{
+  "title": "Department Management",
+  "description": "Manage organizational departments and their structure here.",
+  "newDepartment": "New Department",
+  "editDepartment": "Edit Department",
+  "deleteDepartment": "Delete Department",
+  "deptName": "Department Name",
+  "sort": "Sort Order",
+  "leader": "Leader",
+  "phone": "Phone",
+  "email": "Email",
+  "status": "Status",
+  "createTime": "Create Time"
+}

@@ -11,17 +11,20 @@ enum LocalEnum {
 import en_US from "./lang/en_US";
 import zh_CN from "./lang/zh_CN";
 
-// const defaultLng = getStringItem(StorageEnum.I18N) || (LocalEnum.en_US as string);
-const defaultLng = "zh_CN";
+// 从 localStorage 读取语言设置，如果没有则使用中文
+const storedLng = typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') : null;
+const defaultLng = storedLng || "zh_CN";
 
 // 初始化时设置HTML lang属性，否则系统语言和设定不同时会弹出浏览器的翻译提示
-document.documentElement.lang = defaultLng;
+if (typeof document !== 'undefined') {
+	document.documentElement.lang = defaultLng;
+}
 
 i18n
 	// 加载翻译文件
 	// .use(Backend)
 	// detect user language
-	// learn more: https://github.com/i18next/i18next-browser-languageDetector
+	// learn more: https://github.com/i18next/i18next-browser-languagedetector
 	.use(LanguageDetector)
 	// pass the i18n instance to react-i18next.
 	.use(initReactI18next)
@@ -37,15 +40,18 @@ i18n
 		interpolation: {
 			escapeValue: false, // not needed for react as it escapes by default
 		},
-		// ns: ['common', 'sidebar', 'settings', 'tasks'],
-		// defaultNS: 'sidebar',
+		react: {
+			useSuspense: false,
+		},
 		resources: {
 			en_US: en_US,
 			zh_CN: zh_CN,
 		},
+		detection: {
+			order: ['localStorage', 'navigator'],
+			caches: ['localStorage'],
+		},
 	});
-	// console.log(1111111111)
-	// console.log(i18n.resources)
 
 export const { t } = i18n;
 export default i18n;

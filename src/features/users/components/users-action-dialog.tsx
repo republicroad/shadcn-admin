@@ -26,6 +26,7 @@ import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { type SysUser, userService } from '@/services'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 const statuses = [
   { value: '0', label: 'Normal' },
@@ -93,6 +94,7 @@ export function UsersActionDialog({
   onSuccess,
 }: UserActionDialogProps) {
   const isEdit = !!currentRow
+  const { t } = useTranslation('users')
 
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
@@ -152,10 +154,10 @@ export function UsersActionDialog({
           phonenumber: data.phonenumber,
           sex: data.sex,
           status: data.status,
-          deptId: data.deptId,
+          deptId: data.deptId && data.deptId > 0 ? data.deptId : undefined,
           remark: data.remark,
         })
-        toast.success('User updated successfully')
+        toast.success(t('success.updated'))
       } else {
         await userService.createUser({
           userName: data.userName,
@@ -165,16 +167,33 @@ export function UsersActionDialog({
           sex: data.sex,
           password: data.password,
           status: data.status,
-          deptId: data.deptId,
+          deptId: data.deptId && data.deptId > 0 ? data.deptId : undefined,
           remark: data.remark,
         })
-        toast.success('User created successfully')
+        toast.success(t('success.created'))
       }
       form.reset()
       onOpenChange(false)
       onSuccess?.()
     } catch (error: any) {
-      toast.error(error.response?.data?.msg || 'Operation failed')
+      console.log('Error caught:', error)
+      console.log('Error response:', error.response)
+      console.log('Error response data:', error.response?.data)
+
+      // 处理用户名重复错误
+      const errorMsg = error.response?.data?.msg || ''
+      const errorCode = error.response?.data?.code
+
+      console.log('Error message:', errorMsg)
+      console.log('Error code:', errorCode)
+
+      if (errorCode === 409 || errorMsg.includes('用户名已存在') || errorMsg.includes('already exists')) {
+        toast.error(t('errors.userAlreadyExists'))
+      } else if (isEdit) {
+        toast.error(t('errors.updateFailed'))
+      } else {
+        toast.error(t('errors.createFailed'))
+      }
     }
   }
 

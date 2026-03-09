@@ -4,48 +4,52 @@ import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { type SysUser, userService } from '@/services'
+import { useTranslation } from 'react-i18next'
 
 type UserMultiDeleteDialogProps<TData> = {
   open: boolean
   onOpenChange: (open: boolean) => void
   table: Table<TData>
+  onSuccess?: () => void
 }
-
-const CONFIRM_WORD = 'DELETE'
 
 export function UsersMultiDeleteDialog<TData>({
   open,
   onOpenChange,
   table,
+  onSuccess,
 }: UserMultiDeleteDialogProps<TData>) {
-  const [value, setValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { t } = useTranslation(['users', 'common'])
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
-  const handleDelete = () => {
-    if (value.trim() !== CONFIRM_WORD) {
-      toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
-      return
-    }
+  const handleDelete = async () => {
+    setLoading(true)
+    try {
+      // 获取选中用户的 ID
+      const userIds = selectedRows.map((row) => (row.original as SysUser).userId)
 
-    onOpenChange(false)
+      // 调用批量删除 API
+      await userService.deleteUsers(userIds)
 
-    toast.promise(sleep(2000), {
-      loading: 'Deleting users...',
-      success: () => {
-        setValue('')
-        table.resetRowSelection()
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? 'users' : 'user'
+      toast.success(
+        `${t('success.deleted')} ${selectedRows.length} ${
+          selectedRows.length > 1 ? t('deleteUsers') : t('deleteUser')
         }`
-      },
-      error: 'Error',
-    })
+      )
+
+      table.resetRowSelection()
+      onOpenChange(false)
+      onSuccess?.()
+    } catch (error: any) {
+      toast.error(error.response?.data?.msg || t('errors.deleteFailed'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -53,42 +57,38 @@ export function UsersMultiDeleteDialog<TData>({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== CONFIRM_WORD}
+      disabled={loading}
       title={
         <span className='text-destructive'>
           <AlertTriangle
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'users' : 'user'}
+          {t('deleteUsers')} ({selectedRows.length})
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Are you sure you want to delete the selected users? <br />
-            This action cannot be undone.
+            {t('deleteUsers')} {selectedRows.length} {selectedRows.length > 1 ? t('deleteUsers') : t('deleteUser')}?
+            <br />
+            {selectedRows.length > 0 && (
+              <span className='mt-2 block text-sm text-muted-foreground'>
+                {selectedRows.slice(0, 5).map((row) => (row.original as SysUser).userName).join(', ')}
+                {selectedRows.length > 5 && ` ... (+${selectedRows.length - 5})`}
+              </span>
+            )}
           </p>
 
-          <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span className=''>Confirm by typing "{CONFIRM_WORD}":</span>
-            <Input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
-            />
-          </Label>
-
           <Alert variant='destructive'>
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>{t('common:warning') || 'Warning'}!</AlertTitle>
             <AlertDescription>
-              Please be careful, this operation can not be rolled back.
+              {t('common:cannotUndo') || 'This operation cannot be undone.'}
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Delete'
+      confirmText={t('common:delete') || 'Delete'}
       destructive
     />
   )

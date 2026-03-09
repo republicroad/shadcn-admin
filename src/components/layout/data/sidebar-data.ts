@@ -91,6 +91,11 @@ export function useSidebarData() {
           icon: Settings,
           items: [
             {
+              title: t('userManagement'),
+              url: '/users',
+              icon: Users,
+            },
+            {
               title: t('roles'),
               url: '/roles',
               icon: Shield,
