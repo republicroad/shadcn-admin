@@ -116,7 +116,7 @@ Start the server
 
 If you find this project helpful or use this in your own work, consider [sponsoring me](https://github.com/sponsors/satnaing) to support development and maintenance. You can [buy me a coffee](https://buymeacoffee.com/satnaing) as well. Don’t worry, every penny helps. Thank you! 🙏
 
-For questions or sponsorship inquiries, feel free to reach out at [satnaingdev@gmail.com](mailto:satnaingdev@gmail.com).
+For questions or sponsorship inquiries, feel free to reach out at [satnaingdev@163.com](mailto:satnaingdev@163.com).
 
 ### Current Sponsor
 

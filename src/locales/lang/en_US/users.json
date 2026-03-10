@@ -18,6 +18,45 @@
   "delete": "Delete",
   "statusNormal": "Normal",
   "statusDisabled": "Disabled",
+  "dialogDescription": {
+    "create": "Create new user here. Click save when you're done.",
+    "edit": "Update the user here. Click save when you're done."
+  },
+  "deleteDialog": {
+    "title": "Delete User",
+    "description": "Are you sure you want to delete user <strong>{{userName}}</strong> ({{nickName}})?",
+    "warning": "This action will permanently remove the user from the system.",
+    "warningTitle": "Warning",
+    "cannotUndo": "This operation cannot be undone."
+  },
+  "multiDeleteDialog": {
+    "title": "Delete {{count}} Users",
+    "description": "Are you sure you want to delete {{count}} users?"
+  },
+  "inviteDialog": {
+    "title": "Invite User",
+    "description": "Invite new user to join your team by sending them an email invitation. Assign a role to define their access level.",
+    "role": "Role",
+    "descriptionField": "Description (optional)",
+    "cancel": "Cancel",
+    "invite": "Invite"
+  },
+  "buttons": {
+    "saveChanges": "Save changes",
+    "inviteUser": "Invite User",
+    "addUser": "Add User"
+  },
+  "placeholders": {
+    "userName": "userName",
+    "nickName": "nickName",
+    "email": "bike@example.com",
+    "phone": "+1234567890",
+    "password": "e.g., 123456",
+    "selectStatus": "Select status",
+    "inviteEmail": "eg: bike@163.com",
+    "selectRole": "Select a role",
+    "inviteDescription": "Add a personal note to your invitation (optional)"
+  },
   "errors": {
     "userAlreadyExists": "This username already exists",
     "createFailed": "Failed to create user",

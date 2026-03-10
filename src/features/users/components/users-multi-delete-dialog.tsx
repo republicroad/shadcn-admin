@@ -64,13 +64,13 @@ export function UsersMultiDeleteDialog<TData>({
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          {t('deleteUsers')} ({selectedRows.length})
+          {t('multiDeleteDialog.title', { count: selectedRows.length })}
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            {t('deleteUsers')} {selectedRows.length} {selectedRows.length > 1 ? t('deleteUsers') : t('deleteUser')}?
+            {t('multiDeleteDialog.description', { count: selectedRows.length })}
             <br />
             {selectedRows.length > 0 && (
               <span className='mt-2 block text-sm text-muted-foreground'>
@@ -81,14 +81,14 @@ export function UsersMultiDeleteDialog<TData>({
           </p>
 
           <Alert variant='destructive'>
-            <AlertTitle>{t('common:warning') || 'Warning'}!</AlertTitle>
+            <AlertTitle>{t('common:warning')}!</AlertTitle>
             <AlertDescription>
-              {t('common:cannotUndo') || 'This operation cannot be undone.'}
+              {t('common:cannotUndo')}
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText={t('common:delete') || 'Delete'}
+      confirmText={t('common:delete')}
       destructive
     />
   )

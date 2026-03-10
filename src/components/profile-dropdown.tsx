@@ -35,7 +35,7 @@ export function ProfileDropdown() {
             <div className='flex flex-col gap-1.5'>
               <p className='text-sm leading-none font-medium'>satnaing</p>
               <p className='text-xs leading-none text-muted-foreground'>
-                satnaingdev@gmail.com
+                satnaingdev@163.com
               </p>
             </div>
           </DropdownMenuLabel>

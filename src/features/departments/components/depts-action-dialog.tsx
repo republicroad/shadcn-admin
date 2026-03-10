@@ -148,7 +148,7 @@ export function DeptsActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>Leader</FormLabel>
                     <FormControl>
-                      <Input placeholder='e.g., John Doe' className='col-span-4' {...field} />
+                      <Input placeholder='e.g., bike' className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>

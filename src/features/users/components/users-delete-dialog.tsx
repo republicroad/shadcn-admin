@@ -22,7 +22,7 @@ export function UsersDeleteDialog({
   onSuccess,
 }: UserDeleteDialogProps) {
   const [loading, setLoading] = useState(false)
-  const { t } = useTranslation('users')
+  const { t } = useTranslation(['users', 'common'])
 
   const handleDelete = async () => {
     setLoading(true)
@@ -50,27 +50,31 @@ export function UsersDeleteDialog({
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Delete User
+          {t('deleteDialog.title')}
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Are you sure you want to delete user{' '}
-            <span className='font-bold'>{currentRow.userName}</span> ({currentRow.nickName})?
+            <span dangerouslySetInnerHTML={{
+              __html: t('deleteDialog.description', {
+                userName: currentRow.userName,
+                nickName: currentRow.nickName
+              })
+            }} />
             <br />
-            This action will permanently remove the user from the system.
+            {t('deleteDialog.warning')}
           </p>
 
           <Alert variant='destructive'>
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>{t('deleteDialog.warningTitle')}!</AlertTitle>
             <AlertDescription>
-              This operation cannot be rolled back.
+              {t('deleteDialog.cannotUndo')}
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Delete'
+      confirmText={t('common:delete')}
       destructive
     />
   )

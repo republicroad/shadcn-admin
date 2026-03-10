@@ -36,7 +36,7 @@ export function useSidebarData() {
   return {
   user: {
     name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    email: 'satnaingdev@163.com',
     avatar: '/avatars/shadcn.jpg',
   },
   teams: [
