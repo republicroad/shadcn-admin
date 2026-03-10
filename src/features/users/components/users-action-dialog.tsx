@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,7 +24,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { type SysUser, userService } from '@/services'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
+import { ChevronsUpDown } from 'lucide-react'
+import { type SysUser, userService, roleService, type SysRole } from '@/services'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
@@ -40,6 +44,7 @@ const formSchema = z
     status: z.string().optional(),
     deptId: z.number().optional(),
     remark: z.string().optional(),
+    roleIds: z.array(z.number()).optional(),
     isEdit: z.boolean(),
   })
   .refine(
@@ -88,8 +93,11 @@ export function UsersActionDialog({
   onOpenChange,
   onSuccess,
 }: UserActionDialogProps) {
+  // console.log('Current user data:', currentRow)
   const isEdit = !!currentRow
   const { t } = useTranslation('users')
+  const [roles, setRoles] = useState<SysRole[]>([])
+  const [loadingRoles, setLoadingRoles] = useState(false)
 
   const statuses = [
     { value: '0', label: t('statusNormal') },
@@ -109,12 +117,33 @@ export function UsersActionDialog({
       status: '0',
       deptId: 0,
       remark: '',
+      roleIds: [],
       isEdit: false,
     },
   })
 
   useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        setLoadingRoles(true)
+        const data = await roleService.getAllRoles()
+        setRoles(data)
+      } catch (error) {
+        console.error('Failed to fetch roles:', error)
+      } finally {
+        setLoadingRoles(false)
+      }
+    }
+
+    if (open) {
+      fetchRoles()
+    }
+  }, [open])
+
+  useEffect(() => {
+    console.log('Current user data in effect:', currentRow)
     if (currentRow) {
+      const roleIds = currentRow.roles?.map((role) => role.roleId) || []
       form.reset({
         userName: currentRow.userName,
         nickName: currentRow.nickName,
@@ -126,9 +155,10 @@ export function UsersActionDialog({
         status: currentRow.status || '0',
         deptId: currentRow.deptId || 0,
         remark: currentRow.remark || '',
+        roleIds: roleIds,
         isEdit: true,
       })
-    } else {
+    } else if (!currentRow) {
       form.reset({
         userName: '',
         nickName: '',
@@ -140,10 +170,11 @@ export function UsersActionDialog({
         status: '0',
         deptId: 0,
         remark: '',
+        roleIds: [],
         isEdit: false,
       })
     }
-  }, [currentRow, form])
+  }, [currentRow, form, loadingRoles])
 
   const onSubmit = async (data: UserForm) => {
     try {
@@ -156,19 +187,21 @@ export function UsersActionDialog({
           status: data.status,
           deptId: data.deptId && data.deptId > 0 ? data.deptId : undefined,
           remark: data.remark,
+          roleIds: data.roleIds,
         })
         toast.success(t('success.updated'))
       } else {
         await userService.createUser({
           userName: data.userName,
           nickName: data.nickName,
-          email: data.email,
-          phonenumber: data.phonenumber,
+          email: data.email || '',
+          phonenumber: data.phonenumber || '',
           sex: data.sex,
           password: data.password,
           status: data.status,
           deptId: data.deptId && data.deptId > 0 ? data.deptId : undefined,
           remark: data.remark,
+          roleIds: data.roleIds,
         })
         toast.success(t('success.created'))
       }
@@ -296,6 +329,83 @@ export function UsersActionDialog({
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
+              />
+              <FormField
+                control={form.control}
+                name='roleIds'
+                render={({ field }) => {
+                  const selectedRoles = roles.filter((role) =>
+                    field.value?.includes(role.roleId)
+                  )
+                  return (
+                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                      <FormLabel className='col-span-2 text-end'>{t('role')}</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              className='col-span-4 justify-between font-normal h-auto min-h-10'
+                            >
+                              <div className='flex flex-wrap gap-1 flex-1'>
+                                {selectedRoles.length > 0 ? (
+                                  selectedRoles.map((role) => (
+                                    <Badge key={role.roleId} variant='secondary'>
+                                      {role.roleName}
+                                    </Badge>
+                                  ))
+                                ) : (
+                                  <span className='text-muted-foreground'>
+                                    {t('placeholders.selectRole')}
+                                  </span>
+                                )}
+                              </div>
+                              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-[300px] p-0'>
+                          <div className='max-h-[300px] overflow-y-auto p-4'>
+                            {loadingRoles ? (
+                              <div className='text-sm text-muted-foreground text-center py-4'>
+                                Loading roles...
+                              </div>
+                            ) : roles.length === 0 ? (
+                              <div className='text-sm text-muted-foreground text-center py-4'>
+                                No roles available
+                              </div>
+                            ) : (
+                              <div className='space-y-2'>
+                                {roles.map((role) => (
+                                  <div key={role.roleId} className='flex items-center space-x-2'>
+                                    <Checkbox
+                                      checked={field.value?.includes(role.roleId)}
+                                      onCheckedChange={(checked) => {
+                                        const currentValue = field.value || []
+                                        if (checked) {
+                                          field.onChange([...currentValue, role.roleId])
+                                        } else {
+                                          field.onChange(
+                                            currentValue.filter((id) => id !== role.roleId)
+                                          )
+                                        }
+                                      }}
+                                    />
+                                    <label className='text-sm font-normal cursor-pointer flex-1'>
+                                      {role.roleName}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage className='col-span-4 col-start-3' />
+                    </FormItem>
+                  )
+                }}
               />
               {!isEdit && (
                 <>

@@ -11,6 +11,7 @@
   "email": "邮箱",
   "phone": "手机号",
   "status": "状态",
+  "role": "角色",
   "createTime": "创建时间",
   "password": "密码",
   "confirmPassword": "确认密码",
@@ -54,6 +55,7 @@
     "password": "例如：123456",
     "selectStatus": "选择状态",
     "inviteEmail": "例如：bike@163.com",
+    "selectRoles": "选择角色",
     "selectRole": "选择角色",
     "inviteDescription": "为您的邀请添加个人备注（可选）"
   },

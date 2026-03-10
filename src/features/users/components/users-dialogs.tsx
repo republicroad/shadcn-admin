@@ -23,7 +23,7 @@ export function UsersDialogs({ onRefresh }: { onRefresh?: () => void }) {
       {currentRow && (
         <>
           <UsersActionDialog
-            key={`user-edit-${currentRow.id}`}
+            key={`user-edit-${currentRow.userId}`}
             open={open === 'edit'}
             onOpenChange={(isOpen) => {
               setOpen(isOpen ? 'edit' : null)
@@ -38,7 +38,7 @@ export function UsersDialogs({ onRefresh }: { onRefresh?: () => void }) {
           />
 
           <UsersDeleteDialog
-            key={`user-delete-${currentRow.id}`}
+            key={`user-delete-${currentRow.userId}`}
             open={open === 'delete'}
             onOpenChange={(isOpen) => {
               setOpen(isOpen ? 'delete' : null)

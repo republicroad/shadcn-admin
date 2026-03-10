@@ -110,6 +110,28 @@ export function useUsersColumns(): ColumnDef<SysUser>[] {
       enableSorting: false,
     },
     {
+      accessorKey: 'roles',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('role')} />
+      ),
+      cell: ({ row }) => {
+        const roles = row.getValue('roles') as any[]
+        if (!roles || roles.length === 0) {
+          return <div className='text-muted-foreground'>-</div>
+        }
+        return (
+          <div className='flex flex-wrap gap-1'>
+            {roles.map((role) => (
+              <Badge key={role.roleId} variant='secondary'>
+                {role.roleName}
+              </Badge>
+            ))}
+          </div>
+        )
+      },
+      enableSorting: false,
+    },
+    {
       accessorKey: 'createTime',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('createTime')} />

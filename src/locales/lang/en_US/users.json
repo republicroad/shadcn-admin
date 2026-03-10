@@ -11,6 +11,7 @@
   "email": "Email",
   "phone": "Phone",
   "status": "Status",
+  "role": "Role",
   "createTime": "Create Time",
   "password": "Password",
   "confirmPassword": "Confirm Password",
@@ -53,6 +54,7 @@
     "phone": "+1234567890",
     "password": "e.g., 123456",
     "selectStatus": "Select status",
+    "selectRoles": "Select roles",
     "inviteEmail": "eg: bike@163.com",
     "selectRole": "Select a role",
     "inviteDescription": "Add a personal note to your invitation (optional)"
