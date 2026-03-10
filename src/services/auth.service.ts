@@ -5,6 +5,13 @@ export interface LoginRequest {
   password: string
 }
 
+export interface RegisterRequest {
+  userName: string
+  password: string
+  email?: string
+  nickName?: string
+}
+
 export interface LoginResponse {
   user: {
     userId: number
@@ -45,6 +52,11 @@ export interface ChangePasswordRequest {
 export const authService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/login', data)
+    return response.data.data
+  },
+
+  async register(data: RegisterRequest): Promise<LoginResponse> {
+    const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/register', data)
     return response.data.data
   },
 

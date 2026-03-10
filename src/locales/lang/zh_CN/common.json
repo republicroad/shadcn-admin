@@ -22,6 +22,15 @@
 		"warning": "警告",
 		"delete": "删除",
 		"cannotUndo": "此操作无法撤销",
-		"actions": "操作"
+		"actions": "操作",
+
+		"profile": "个人资料",
+		"billing": "账单",
+		"settings": "设置",
+		"newTeam": "新建团队",
+		"signOut": "退出登录",
+		"upgradeToPro": "升级到专业版",
+		"account": "账户",
+		"notifications": "通知"
 	}
 }

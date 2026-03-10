@@ -1,4 +1,5 @@
-import { useSearch } from '@tanstack/react-router'
+import { Link, useSearch } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   Card,
   CardContent,
@@ -12,15 +13,22 @@ import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
+  const { t } = useTranslation('auth')
 
   return (
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>{t('signIn.title')}</CardTitle>
           <CardDescription>
-            Enter your email and password below to <br />
-            log into your account
+            {t('signIn.description')}{' '}
+            {t('signIn.noAccount')}{' '}
+            <Link
+              to='/sign-up'
+              className='underline underline-offset-4 hover:text-primary'
+            >
+              {t('signIn.signUpLink')}
+            </Link>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -28,19 +36,19 @@ export function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='px-8 text-center text-sm text-muted-foreground'>
-            By clicking sign in, you agree to our{' '}
+            {t('signIn.terms')}{' '}
             <a
               href='/terms'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Terms of Service
+              {t('signIn.termsLink')}
             </a>{' '}
-            and{' '}
+            {t('signIn.and')}{' '}
             <a
               href='/privacy'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Privacy Policy
+              {t('signIn.privacyLink')}
             </a>
             .
           </p>

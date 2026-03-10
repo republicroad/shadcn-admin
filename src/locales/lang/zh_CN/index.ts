@@ -7,6 +7,7 @@ import departments from "./departments.json";
 import posts from "./posts.json";
 import users from "./users.json";
 import settings from "./settings.json";
+import auth from "./auth.json";
 
 export default {
 	...common,
@@ -18,4 +19,5 @@ export default {
 	posts,
 	users,
 	settings,
+	auth,
 };
