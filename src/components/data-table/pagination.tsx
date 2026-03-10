@@ -25,8 +25,8 @@ export function DataTablePagination<TData>({
   table,
   className,
 }: DataTablePaginationProps<TData>) {
-  const { t } = useTranslation('common')
   const currentPage = table.getState().pagination.pageIndex + 1
+  const { t } = useTranslation('common')
   const totalPages = table.getPageCount()
   const pageNumbers = getPageNumbers(currentPage, totalPages)
 
@@ -41,7 +41,7 @@ export function DataTablePagination<TData>({
     >
       <div className='flex w-full items-center justify-between'>
         <div className='flex w-[100px] items-center justify-center text-sm font-medium @2xl/content:hidden'>
-          {t('common.page')} {currentPage} {t('common.of')} {totalPages}
+          {t('page')} {currentPage} {t('of')} {totalPages}
         </div>
         <div className='flex items-center gap-2 @max-2xl/content:flex-row-reverse'>
           <Select
@@ -61,13 +61,13 @@ export function DataTablePagination<TData>({
               ))}
             </SelectContent>
           </Select>
-          <p className='hidden text-sm font-medium sm:block'>{t('common.rowsPerPage')}</p>
+          <p className='hidden text-sm font-medium sm:block'>{t('rowsPerPage')}</p>
         </div>
       </div>
 
       <div className='flex items-center sm:space-x-6 lg:space-x-8'>
         <div className='flex w-[100px] items-center justify-center text-sm font-medium @max-3xl/content:hidden'>
-          {t('common.page')} {currentPage} {t('common.of')} {totalPages}
+          {t('page')} {currentPage} {t('of')} {totalPages}
         </div>
         <div className='flex items-center space-x-2'>
           <Button

@@ -82,11 +82,6 @@ export function useSidebarData() {
           icon: MessagesSquare,
         },
         {
-          title: t('users'),
-          url: '/users',
-          icon: Users,
-        },
-        {
           title: t('system'),
           icon: Settings,
           items: [
@@ -157,7 +152,7 @@ export function useSidebarData() {
               url: '/sign-up',
             },
             {
-              title: t('forgot password'),
+              title: t('forgotPassword'),
               url: '/forgot-password',
             },
             {

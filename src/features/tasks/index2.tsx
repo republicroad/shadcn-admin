@@ -1,7 +1,12 @@
 import React, { memo } from 'react'
 
-const ThemeContext = React.createContext(null) // 主题颜色Context
-const LanContext = React.createContext(null) // 主题语言Context
+type ThemeContextValue = {
+  color: string
+  background: string
+}
+
+const ThemeContext = React.createContext<ThemeContextValue | null>(null) // 主题颜色Context
+const LanContext = React.createContext<string | null>(null) // 主题语言Context
 
 function ConsumerDemo() {
   return (
@@ -9,7 +14,7 @@ function ConsumerDemo() {
       {(themeContextValue) => (
         <LanContext.Consumer>
           {(lanContextValue) => {
-            const { color, background } = themeContextValue
+            const { color, background } = themeContextValue || { color: '', background: '' }
             return (
               <div style={{ color, background }}>
                 {' '}
@@ -28,11 +33,11 @@ function ConsumerDemo() {
 const Son = memo(() => <ConsumerDemo />)
 
 export default function Tasks() {
-  const [themeContextValue] = React.useState({
+  const [themeContextValue] = React.useState<ThemeContextValue>({
     color: '#FFF',
     background: 'blue',
   })
-  const [lanContextValue] = React.useState('CH') // CH -> 中文 ， EN -> 英文
+  const [lanContextValue] = React.useState<string>('CH') // CH -> 中文 ， EN -> 英文
 
   return (
     <ThemeContext.Provider value={themeContextValue}>

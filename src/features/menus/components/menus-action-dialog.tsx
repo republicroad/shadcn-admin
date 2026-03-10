@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { statuses, menuTypes, visibleOptions, cacheOptions, frameOptions } from '../data/data'
+import { statuses, menuTypes, visibleOptions } from '../data/data'
 import { useMenusDialog } from './menus-provider'
 import { menuService } from '@/services'
 import { toast } from 'sonner'

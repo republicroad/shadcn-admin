@@ -1,4 +1,14 @@
-import { type conversations } from './convo.json'
+export type Message = {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: number
+}
 
-export type ChatUser = (typeof conversations)[number]
-export type Convo = ChatUser['messages'][number]
+export type Conversation = {
+  id: string
+  title: string
+  messages: Message[]
+  createdAt: number
+  updatedAt: number
+}
