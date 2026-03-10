@@ -28,7 +28,7 @@ export interface RoleListQuery {
 export interface CreateRoleRequest {
   roleName: string
   roleKey: string
-  roleSort: number
+  roleSort?: number
   dataScope?: string
   menuIds?: number[]
   deptIds?: number[]

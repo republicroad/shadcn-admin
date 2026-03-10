@@ -28,8 +28,8 @@ export function RolesTable() {
       })
       setData(result.list)
       setTotal(result.total)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // errors handled by api interceptor
     } finally {
       setLoading(false)
     }
@@ -60,9 +60,10 @@ export function RolesTable() {
 
   return (
     <div className='flex flex-1 flex-col gap-4'>
-      <DataTableToolbar table={table} searchPlaceholder='Filter by role name...' searchKey='roleName'>
+      <div className='flex items-center justify-between gap-2'>
+        <DataTableToolbar table={table} searchPlaceholder='Filter by role name...' searchKey='roleName' />
         <DataTableBulkActions table={table} />
-      </DataTableToolbar>
+      </div>
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>

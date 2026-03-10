@@ -26,11 +26,10 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { statuses, dataScopes } from '../data/data'
 import { useRolesDialog } from './roles-provider'
 import { roleService } from '@/services'
-import { toast } from 'sonner'
 
 const formSchema = z.object({
-  roleName: z.string().min(1, 'Role name is required.'),
-  roleKey: z.string().min(1, 'Role key is required.'),
+  roleName: z.string().min(1, 'Role name is required.').max(30, 'Role name must be less than 30 characters.'),
+  roleKey: z.string().min(1, 'Role key is required.').max(100, 'Role key must be less than 100 characters.').regex(/^[a-zA-Z0-9_:]+$/, 'Role key can only contain letters, numbers, underscores and colons.'),
   roleSort: z.number().min(0),
   dataScope: z.string().optional(),
   status: z.string().optional(),
@@ -65,24 +64,35 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
         status: currentRow.status || '0',
         remark: currentRow.remark || '',
       })
-    } else {
+    } else if (open) {
       form.reset({ roleName: '', roleKey: '', roleSort: 0, dataScope: '1', status: '0', remark: '' })
     }
-  }, [currentRow, form])
+  }, [currentRow, form, open])
 
   const onSubmit = async (data: FormValues) => {
     try {
       if (isEdit && currentRow) {
         await roleService.updateRole(currentRow.roleId, data)
-        toast.success('Role updated successfully')
       } else {
-        await roleService.createRole(data)
-        toast.success('Role created successfully')
+        const { roleSort, ...createData } = data
+        await roleService.createRole(createData)
       }
       setOpen(false)
       onSuccess?.()
     } catch (error: any) {
-      toast.error(error.response?.data?.msg || 'Operation failed')
+      const errorMsg = error.message || error.response?.data?.msg || 'Operation failed'
+
+      if (errorMsg.includes('角色名') || errorMsg.includes('role name')) {
+        form.setError('roleName', {
+          type: 'manual',
+          message: errorMsg
+        })
+      } else if (errorMsg.includes('权限字符') || errorMsg.includes('role key')) {
+        form.setError('roleKey', {
+          type: 'manual',
+          message: errorMsg
+        })
+      }
     }
   }
 
@@ -124,25 +134,27 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='roleSort'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Sort</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='number'
-                        placeholder='0'
-                        className='col-span-4'
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
+              {isEdit && (
+                <FormField
+                  control={form.control}
+                  name='roleSort'
+                  render={({ field }) => (
+                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                      <FormLabel className='col-span-2 text-end'>Sort</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='0'
+                          className='col-span-4'
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage className='col-span-4 col-start-3' />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name='dataScope'

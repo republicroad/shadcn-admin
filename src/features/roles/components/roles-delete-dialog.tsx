@@ -1,5 +1,4 @@
 import { roleService } from '@/services'
-import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useRolesDeleteDialog, useRolesMultiDeleteDialog } from './roles-provider'
 import { type Row } from '@tanstack/react-table'
@@ -12,11 +11,10 @@ export function RolesDeleteDialog({ onSuccess }: { onSuccess?: () => void }) {
     if (!currentRow) return
     try {
       await roleService.deleteRole(currentRow.roleId)
-      toast.success('Role deleted successfully')
       setOpen(false)
       onSuccess?.()
-    } catch (error: any) {
-      toast.error(error.response?.data?.msg || 'Delete failed')
+    } catch {
+      // errors handled by api interceptor
     }
   }
 
@@ -46,11 +44,10 @@ export function RolesMultiDeleteDialog({
     try {
       const ids = rows.map((r) => r.original.roleId)
       await roleService.deleteRoles(ids)
-      toast.success('Roles deleted successfully')
       setOpen(false)
       onSuccess?.()
-    } catch (error: any) {
-      toast.error(error.response?.data?.msg || 'Delete failed')
+    } catch {
+      // errors handled by api interceptor
     }
   }
 
