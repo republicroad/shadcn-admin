@@ -23,6 +23,9 @@
 		"delete": "Delete",
 		"cannotUndo": "This operation cannot be undone",
 		"actions": "Actions",
+		"page": "Page",
+		"of": "of",
+		"rowsPerPage": "Rows per page",
 
 		"profile": "Profile",
 		"billing": "Billing",

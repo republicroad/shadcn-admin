@@ -23,9 +23,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { statuses, dataScopes } from '../data/data'
+import { useDataScopesData, useStatusesData } from '../data/data'
 import { useRolesDialog } from './roles-provider'
 import { roleService } from '@/services'
+import { useTranslation } from 'react-i18next'
 
 const formSchema = z.object({
   roleName: z.string().min(1, 'Role name is required.').max(30, 'Role name must be less than 30 characters.'),
@@ -39,6 +40,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
+  const { t } = useTranslation('roles')
+  const statuses = useStatusesData()
+  const dataScopes = useDataScopesData()
   const { open, setOpen, currentRow } = useRolesDialog()
   const isEdit = !!currentRow
 
@@ -100,9 +104,9 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-lg'>
         <DialogHeader className='text-left'>
-          <DialogTitle>{isEdit ? 'Edit Role' : 'Create New Role'}</DialogTitle>
+          <DialogTitle>{isEdit ? t('editRole') : t('createNewRole')}</DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update the role information.' : 'Add a new role to the system.'}
+            {isEdit ? t('updateRoleInfo') : t('addNewRole')}
           </DialogDescription>
         </DialogHeader>
         <div className='py-4'>
@@ -113,9 +117,9 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                 name='roleName'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Role Name</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>{t('roleName')}</FormLabel>
                     <FormControl>
-                      <Input placeholder='e.g., Administrator' className='col-span-4' {...field} />
+                      <Input placeholder={t('roleNamePlaceholder')} className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -126,9 +130,9 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                 name='roleKey'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Role Key</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>{t('roleKey')}</FormLabel>
                     <FormControl>
-                      <Input placeholder='e.g., admin' className='col-span-4' {...field} />
+                      <Input placeholder={t('roleKeyPlaceholder')} className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -140,7 +144,7 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                   name='roleSort'
                   render={({ field }) => (
                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                      <FormLabel className='col-span-2 text-end'>Sort</FormLabel>
+                      <FormLabel className='col-span-2 text-end'>{t('sort')}</FormLabel>
                       <FormControl>
                         <Input
                           type='number'
@@ -160,12 +164,12 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                 name='dataScope'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Data Scope</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>{t('dataScope')}</FormLabel>
                     <FormControl>
                       <SelectDropdown
                         defaultValue={field.value}
                         onValueChange={field.onChange}
-                        placeholder='Select data scope'
+                        placeholder={t('selectDataScope')}
                         className='col-span-4'
                         items={dataScopes}
                       />
@@ -179,12 +183,12 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                 name='status'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Status</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>{t('status')}</FormLabel>
                     <FormControl>
                       <SelectDropdown
                         defaultValue={field.value}
                         onValueChange={field.onChange}
-                        placeholder='Select status'
+                        placeholder={t('selectStatus')}
                         className='col-span-4'
                         items={statuses}
                       />
@@ -198,9 +202,9 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
                 name='remark'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Remark</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>{t('remark')}</FormLabel>
                     <FormControl>
-                      <Input placeholder='Optional remark' className='col-span-4' {...field} />
+                      <Input placeholder={t('remarkPlaceholder')} className='col-span-4' {...field} />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -211,7 +215,7 @@ export function RolesActionDialog({ onSuccess }: { onSuccess?: () => void }) {
         </div>
         <DialogFooter>
           <Button type='submit' form='role-form'>
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? t('update') : t('create')}
           </Button>
         </DialogFooter>
       </DialogContent>

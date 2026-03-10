@@ -10,12 +10,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { type Role } from '../data/schema'
 import { useRolesDialog, useRolesDeleteDialog } from './roles-provider'
+import { useTranslation } from 'react-i18next'
 
 interface DataTableRowActionsProps {
   row: Row<Role>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { t } = useTranslation('roles')
   const { setOpen, setCurrentRow } = useRolesDialog()
   const { setOpen: setDeleteOpen, setCurrentRow: setDeleteRow } = useRolesDeleteDialog()
 
@@ -41,10 +43,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
-        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>{t('edit')}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className='text-destructive'>
-          Delete
+          {t('delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

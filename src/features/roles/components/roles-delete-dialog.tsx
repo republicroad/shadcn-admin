@@ -3,8 +3,10 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useRolesDeleteDialog, useRolesMultiDeleteDialog } from './roles-provider'
 import { type Row } from '@tanstack/react-table'
 import { type Role } from '../data/schema'
+import { useTranslation } from 'react-i18next'
 
 export function RolesDeleteDialog({ onSuccess }: { onSuccess?: () => void }) {
+  const { t } = useTranslation('roles')
   const { open, setOpen, currentRow } = useRolesDeleteDialog()
 
   const handleDelete = async () => {
@@ -23,9 +25,9 @@ export function RolesDeleteDialog({ onSuccess }: { onSuccess?: () => void }) {
       open={open}
       onOpenChange={setOpen}
       handleConfirm={handleDelete}
-      title='Delete Role'
-      desc={`Are you sure you want to delete role "${currentRow?.roleName}"? This action cannot be undone.`}
-      confirmText='Delete'
+      title={t('deleteRole')}
+      desc={t('deleteConfirm', { name: currentRow?.roleName })}
+      confirmText={t('delete')}
       destructive
     />
   )
@@ -38,6 +40,7 @@ export function RolesMultiDeleteDialog({
   rows: Row<Role>[]
   onSuccess?: () => void
 }) {
+  const { t } = useTranslation('roles')
   const { open, setOpen } = useRolesMultiDeleteDialog()
 
   const handleDelete = async () => {
@@ -56,9 +59,9 @@ export function RolesMultiDeleteDialog({
       open={open}
       onOpenChange={setOpen}
       handleConfirm={handleDelete}
-      title='Delete Roles'
-      desc={`Are you sure you want to delete ${rows.length} role(s)? This action cannot be undone.`}
-      confirmText='Delete'
+      title={t('deleteRoles')}
+      desc={t('deleteMultiConfirm', { count: rows.length })}
+      confirmText={t('delete')}
       destructive
     />
   )

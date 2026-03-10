@@ -9,7 +9,7 @@ import { RolesPrimaryButtons } from './components/roles-primary-buttons'
 import { RolesTable } from './components/roles-table'
 
 export function Roles() {
-  const { t } = useTranslation('roles')
+  const { t } = useTranslation(['roles'])
 
   return (
     <>

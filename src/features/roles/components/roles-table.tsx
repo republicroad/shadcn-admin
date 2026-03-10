@@ -4,12 +4,15 @@ import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { roleService, type SysRole } from '@/services'
-import { rolesColumns } from './roles-columns'
+import { useRolesColumns } from './roles-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { RolesActionDialog } from './roles-action-dialog'
 import { RolesDeleteDialog, RolesMultiDeleteDialog } from './roles-delete-dialog'
+import { useTranslation } from 'react-i18next'
 
 export function RolesTable() {
+  const { t } = useTranslation('roles')
+  const columns = useRolesColumns()
   const [data, setData] = useState<SysRole[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -41,7 +44,7 @@ export function RolesTable() {
 
   const table = useReactTable({
     data,
-    columns: rolesColumns,
+    columns,
     pageCount: Math.ceil(total / pagination.pageSize),
     state: { sorting, columnFilters, columnVisibility, rowSelection, pagination },
     onSortingChange: setSorting,
@@ -61,7 +64,7 @@ export function RolesTable() {
   return (
     <div className='flex flex-1 flex-col gap-4'>
       <div className='flex items-center justify-between gap-2'>
-        <DataTableToolbar table={table} searchPlaceholder='Filter by role name...' searchKey='roleName' />
+        <DataTableToolbar table={table} searchPlaceholder={t('filterByRoleName')} searchKey='roleName' />
         <DataTableBulkActions table={table} />
       </div>
       <div className='overflow-hidden rounded-md border'>
@@ -84,8 +87,8 @@ export function RolesTable() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={rolesColumns.length} className='h-24 text-center'>
-                  Loading...
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  {t('loading')}
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
@@ -100,8 +103,8 @@ export function RolesTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={rolesColumns.length} className='h-24 text-center'>
-                  No results.
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  {t('noResults')}
                 </TableCell>
               </TableRow>
             )}

@@ -20,8 +20,8 @@
   "create": "创建",
   "update": "更新",
   "confirm": "确认",
-  "deleteConfirm": "确定要删除此角色吗？",
-  "deleteMultiConfirm": "确定要删除 {count} 个角色吗？",
+  "deleteConfirm": "确定要删除角色 \"{{name}}\" 吗？此操作不可撤销。",
+  "deleteMultiConfirm": "确定要删除 {{count}} 个角色吗？此操作不可撤销。",
   "createSuccess": "角色创建成功",
   "updateSuccess": "角色更新成功",
   "deleteSuccess": "角色删除成功",
@@ -31,5 +31,16 @@
   "customData": "自定义数据",
   "deptData": "部门数据",
   "deptAndBelow": "部门及以下",
-  "onlySelf": "仅本人"
+  "onlySelf": "仅本人",
+  "roleNamePlaceholder": "例如：管理员",
+  "roleKeyPlaceholder": "例如：admin",
+  "remarkPlaceholder": "可选备注",
+  "selectDataScope": "选择数据权限",
+  "selectStatus": "选择状态",
+  "filterByRoleName": "按角色名称筛选...",
+  "loading": "加载中...",
+  "noResults": "暂无数据。",
+  "createNewRole": "新建角色",
+  "addNewRole": "向系统添加新角色。",
+  "updateRoleInfo": "更新角色信息。"
 }

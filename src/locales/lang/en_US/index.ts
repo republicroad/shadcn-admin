@@ -10,8 +10,8 @@ import settings from "./settings.json";
 import auth from "./auth.json";
 
 export default {
-	...common,
-	...sys,
+	common,
+	sys,
 	sidebar,
 	roles,
 	menus,
