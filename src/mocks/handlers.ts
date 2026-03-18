@@ -3,17 +3,18 @@ import { http, HttpResponse } from 'msw'
 import { users } from '../features/users/data/users'
 import { tasks } from '../features/tasks/data/tasks'
 import { conversations } from '../features/chats/data/convo.json'
+import { counters } from '../features/share_counter/data/counter'
 // import data1 from '../features/chats/data/convo.json' with { type: 'json' }
 
 export const handlers = [
-  // http.post('/api/login', async ({ request }) => {
-  //       const requestBody = await request.json();
-  //       return HttpResponse.json(fake_user_login_jwt(requestBody));
-  // }),
-  // http.all('/api/users', async ({ request }) => {
-  //       // const requestBody = await request.json();
-  //       return HttpResponse.json({"status":0,"data": users});
-  // }),
+  http.post('/api/login', async ({ request }) => {
+        const requestBody = await request.json();
+        return HttpResponse.json(fake_user_login_jwt(requestBody));
+  }),
+  http.all('/api/users', async ({ request }) => {
+        // const requestBody = await request.json();
+        return HttpResponse.json({"status":0,"data": users});
+  }),
   http.all('/api/tasks', async ({ request }) => {
         // const requestBody = await request.json();
         return HttpResponse.json(tasks);
@@ -22,7 +23,10 @@ export const handlers = [
         // const requestBody = await request.json();
         return HttpResponse.json(conversations);
   }),
-
+  http.all('/api/counter', async ({ request }) => {
+    // const requestBody = await request.json();
+    return HttpResponse.json(counters);
+}),
 
 ]
 
