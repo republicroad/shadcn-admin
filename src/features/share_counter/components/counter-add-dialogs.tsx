@@ -1,5 +1,8 @@
 import { z } from 'zod'
+import { toast } from 'sonner'
+import { sleep } from '@/lib/utils'
 import { useForm } from 'react-hook-form'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
@@ -20,10 +23,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { counter_times, counter_types } from '../data/data'
 import { type shareCounter } from '../data/schema'
+import { createCounter } from "../../../api/serverApi"
 
 const formSchema = z
   .object({
@@ -46,6 +49,7 @@ export function CountersActionDialog({
   open,
   onOpenChange,
 }: CounterActionDialogProps) {
+  const queryClient = useQueryClient()
   const form = useForm<CounterForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,9 +60,28 @@ export function CountersActionDialog({
     },
   })
 
+  const addMutation = useMutation({
+    mutationFn: async (values: CounterForm) => {
+      const res = await createCounter(values.user_id,values.counter_name,values.counter_type,values.counter_time)
+      return await res
+    },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['/counter'] }),
+  })
+
   const onSubmit = (values: CounterForm) => {
+    addMutation.mutate(values, {
+      onSuccess: () =>{
+        toast.promise(sleep(0.01), {
+          loading: 'add new counter...',
+          success: () => {
+            return   `add new counter ${values.counter_name} success`
+          },
+          error: 'Error',
+        })
+        queryClient.invalidateQueries({ queryKey: ['/counter'] })
+      }
+    })
     form.reset()
-    showSubmittedData(values)
     onOpenChange(false)
   }
 
@@ -86,6 +109,25 @@ export function CountersActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
+              <FormField
+                control={form.control}
+                name='user_id'
+                render={({ field }) => (
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>
+                    用户id
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='请输入用户id'
+                        className='col-span-4'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name='counter_name'

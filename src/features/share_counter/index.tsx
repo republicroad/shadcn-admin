@@ -8,34 +8,40 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { CounterDialogs } from './components/counter-dialogs'
 import { CounterPrimaryButtons } from './components/counter-primary-button'
 import { CounterProvider } from './components/counter-provider'
-import { CounterTable } from './components/counter-table'
 import { useQuery } from '@tanstack/react-query'
 import { shareCounterListSchema } from './data/schema'
 import { counter_list,counters } from './data/counter'
-
-// import { users } from './data/users'
+import { fetchCounterList } from "../../api/serverApi"
+import { CounterTable } from './components/counter-table'
 
 const route = getRouteApi('/_authenticated/counter/')
 
 export function Counter() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { data } = useQuery({  // data, isLoading, isError, error 
-    queryKey: ['/api/counter'],
-    queryFn: async () => {
-      const response = await fetch('/api/counter');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const res = response.json();
-      return res;
-    },
-  });
+  // const { data } = useQuery({  // data, isLoading, isError, error 
+  //   queryKey: ['/api/counter'],
+  //   queryFn: async () => {
+  //     const response = await fetch('/api/counter');
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     const res = response.json();
+  //     return res;
+  //   },
+  // });
   // data is undefined initially because the query is still in the process of fetching data.
   
-  // const counterList = shareCounterListSchema.parse(counter_list)
-  // const counterList = shareCounterListSchema.parse(counters)
-  const counterList =  data ?? [];
+  // 使用 封装的httpclient 调用
+  const { data } = useQuery({
+    queryKey: ['/counter'],
+    queryFn: async () => {
+      const response = await fetchCounterList();
+      return response
+    },
+  });
+
+  const counterList =  data? data.data: counters;
 
   return (
     <CounterProvider>

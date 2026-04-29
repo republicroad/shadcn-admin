@@ -101,8 +101,10 @@ export const counters =  Array.from({ length: 100 }, () =>{
   const randomLetters = faker.string.alpha({ length: 3 }); 
   const randomNumber = faker.number.int({ min: 100, max: 999 });
   const countertName = `counter-test-${randomLetters}-${randomNumber}`;
+  const user_name = faker.internet.email();
   return {
     user_id: faker.string.uuid(),
+    user_name: user_name,
     counter_name: countertName,
     counter_type: faker.helpers.arrayElement([
       'group_distinct',

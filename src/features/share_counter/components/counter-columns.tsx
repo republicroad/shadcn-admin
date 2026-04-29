@@ -54,6 +54,23 @@ export const counterColumns: ColumnDef<shareCounter>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: 'user_name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='所属用户' />
+    ),
+    cell: ({ row }) => (
+      <LongText className='w-fit ps-2 text-nowrap'>{row.getValue('user_name')}</LongText>
+    ),
+    meta: {
+      className: cn(
+        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+      ),
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'counter_type',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='计算类型' />

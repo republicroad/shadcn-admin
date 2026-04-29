@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
+  PaginationState,
   type SortingState,
   type VisibilityState,
   flexRender,
@@ -54,10 +55,9 @@ export function CounterTable({ data, search, navigate }: DataTableProps) {
   } = useTableUrlState({
     search,
     navigate,
-    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    // pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
       { columnId: 'counter_name', searchKey: 'counter_name', type: 'string' },
       { columnId: 'counter_type', searchKey: 'counter_type', type: 'array' },
       { columnId: 'counter_time', searchKey: 'counter_time', type: 'array' },

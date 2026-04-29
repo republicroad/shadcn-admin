@@ -18,7 +18,9 @@ const counterTimeSchema = z.union([
 export type CounterTime = z.infer<typeof counterTimeSchema>
 
 const shareCounterSchema = z.object({
+  id:z.int(),
   user_id: z.string(),
+  user_name: z.string(),
   counter_name: z.string(),
   counter_type: counterTypeSchema,
   counter_time: counterTimeSchema

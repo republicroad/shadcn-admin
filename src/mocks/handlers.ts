@@ -23,11 +23,6 @@ export const handlers = [
         // const requestBody = await request.json();
         return HttpResponse.json(conversations);
   }),
-  http.all('/api/counter', async ({ request }) => {
-    // const requestBody = await request.json();
-    return HttpResponse.json(counters);
-}),
-
 ]
 
 interface LoginUser {

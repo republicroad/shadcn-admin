@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { type shareCounter } from '../data/schema'
+import { deleteCounter } from '../../../api/serverApi'
+import { toast } from 'sonner'
+import { sleep } from '@/lib/utils'
+import { de } from '@faker-js/faker'
+import { v } from 'node_modules/@faker-js/faker/dist/airline-DF6RqYmq'
 
 type CounterDeleteDialogProps = {
   open: boolean
@@ -16,19 +24,33 @@ export function CountersDeleteDialog({
   onOpenChange,
   currentRow,
 }: CounterDeleteDialogProps) {
-  const [value, setValue] = useState('')
+  const queryClient = useQueryClient()
 
-  const handleDelete = () => {
-    if (value.trim() !== currentRow.counter_name) return
-    onOpenChange(false)
-    showSubmittedData(currentRow, 'The following counter has been deleted:')
-  }
-
+  async function handleDelete(){
+      const res = await deleteCounter(currentRow.id, currentRow.user_id)
+      toast.promise(sleep(0.01), {
+        loading: 'delete counter...',
+        success: () => {
+          return  `delete counter ${currentRow.counter_name} success`
+        },
+        error: 'Error',
+      })
+      onOpenChange(false)
+      return await res
+    }
+  
+  const mutation = useMutation({
+    mutationFn: handleDelete,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/counter'] })
+    },
+  })
+  
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      handleConfirm={handleDelete}
+      handleConfirm={mutation.mutate}
       title={
         <span className='text-destructive'>
           <AlertTriangle
