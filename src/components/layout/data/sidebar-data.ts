@@ -23,6 +23,7 @@ import {
   GalleryVerticalEnd,
   ProjectorIcon,
   RulerIcon,
+  EyeOff
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -219,6 +220,11 @@ export const sidebarData: SidebarData = {
               title: 'Display',
               url: '/settings/display',
               icon: Monitor,
+            },
+            {
+              title: 'Password',
+              url: '/settings/password',
+              icon: EyeOff,
             },
             {
               title: 'Forgot Password',
