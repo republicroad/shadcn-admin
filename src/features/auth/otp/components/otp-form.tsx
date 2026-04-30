@@ -20,6 +20,8 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from '@/components/ui/input-otp'
+import axios from 'axios'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   otp: z
@@ -42,13 +44,34 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
   // eslint-disable-next-line react-hooks/incompatible-library
   const otp = form.watch('otp')
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    showSubmittedData(data)
+    try {
+      // get email from localStorage or context, since it's needed for OTP verification
+      // const email = localStorage.getItem('email'); // or useContext(AuthContext).email
+      // if (!email) throw new Error('Email not found. Please start the forgot password process again.');
+      const email = localStorage.getItem('forgotPassword.email'); 
+      const data_with_email = {email: email, ...data}
+      console.log('OtpForm submitted data:', data_with_email)  
+      const response = await axios.post("/api/verify_otp", data_with_email);
+      console.log("Success:", response);
+      // if (response.status==200) throw new Error('Submission failed');
+      const token = response.data.token; // Assuming the token is in the response data
+      localStorage.setItem('forgotPassword.token', token);
+      localStorage.removeItem('forgotPassword.email');
+      toast.success(response.data.message);
+      // toast.success("otp verified successfully!");
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.message || "Something went wrong");
+    }
+    // showSubmittedData(data)
 
     setTimeout(() => {
       setIsLoading(false)
-      navigate({ to: '/' })
+      // todo: navigate multiple routes based on user role or 
+      // other conditions after successful OTP verification
+      navigate({ to: '/reset-password'})
     }, 1000)
   }
 

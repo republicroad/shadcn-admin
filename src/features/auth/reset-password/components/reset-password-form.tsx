@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -16,15 +17,28 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/password-input'
 import axios from 'axios'
 
 const formSchema = z.object({
   email: z.email({
     error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
   }),
-})
+  // username: z
+  //   .string('Please enter your username.')
+  //   .min(2, 'Username must be at least 2 characters.')
+  //   .max(30, 'Username must not be longer than 30 characters.'),
+  password: z
+      .string()
+      .min(1, 'Please enter your password.')
+      .min(7, 'Password must be at least 7 characters long.'),
+  confirmPassword: z.string().min(1, 'Please confirm your password.'),
+  }).refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match.",
+      path: ['confirmPassword'],
+  })
 
-export function ForgotPasswordForm({
+export function ResetPasswordForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) {
@@ -38,15 +52,18 @@ export function ForgotPasswordForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    toast.promise(axios.post("/api/email_otp", data), {
-      loading: 'Sending email...',
+    const token = localStorage.getItem('forgotPassword.token'); 
+    const data_with_token = {token, ...data}
+    console.log('OtpForm submitted data:', data_with_token)  
+    toast.promise(axios.post("/api/reset-password", data_with_token), {
+      loading: 'Reset password ...',
       success: () => {
-        // Store email for later use in OTP verification
-        localStorage.setItem('forgotPassword.email', data.email);
         setIsLoading(false)
         form.reset()
-        navigate({ to: '/otp' })
-        return `Email sent to ${data.email}`
+        // Clear stored email after successful password reset
+        localStorage.removeItem('forgotPassword.token');
+        navigate({ to: '/sign-in' })
+        return `Reset password for ${data.email}`
       },
       error: (err) => { 
         setIsLoading(false)
@@ -76,8 +93,34 @@ export function ForgotPasswordForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <PasswordInput placeholder='********' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='confirmPassword'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <PasswordInput placeholder='********' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button className='mt-2' disabled={isLoading}>
-          Continue
+          Update Password
           {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRight />}
         </Button>
       </form>

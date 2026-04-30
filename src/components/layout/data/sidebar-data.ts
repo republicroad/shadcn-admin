@@ -225,11 +225,7 @@ export const sidebarData: SidebarData = {
               title: 'Password',
               url: '/settings/password',
               icon: EyeOff,
-            },
-            {
-              title: 'Forgot Password',
-              url: '/forgot-password',
-            },
+            }
           ],
         },
         // {
