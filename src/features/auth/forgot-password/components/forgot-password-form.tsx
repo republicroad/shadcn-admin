@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import api from '@/shared/apiClient'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep, cn } from '@/lib/utils'
@@ -16,7 +17,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import axios from 'axios'
 
 const formSchema = z.object({
   email: z.email({
@@ -38,20 +38,21 @@ export function ForgotPasswordForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    toast.promise(axios.post("/api/email_otp", data), {
+    toast.promise(api.post('/api/email_otp', data), {
       loading: 'Sending email...',
       success: () => {
         // Store email for later use in OTP verification
-        localStorage.setItem('forgotPassword.email', data.email);
+        // todo: 可以考虑把 email 存在 context 或者 global store 中，而不是 localStorage，这样更安全一些
+        localStorage.setItem('forgotPassword.email', data.email)
         setIsLoading(false)
         form.reset()
         navigate({ to: '/otp' })
         return `Email sent to ${data.email}`
       },
-      error: (err) => { 
+      error: (err) => {
         setIsLoading(false)
         // Access custom error message from server response
-        return err.response?.data?.message || err;
+        return err.response?.data?.message || err
       },
     })
   }

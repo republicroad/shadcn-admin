@@ -1,9 +1,9 @@
-
 import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import api from '@/shared/apiClient'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep, cn } from '@/lib/utils'
@@ -18,24 +18,26 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import axios from 'axios'
 
-const formSchema = z.object({
-  email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
-  }),
-  // username: z
-  //   .string('Please enter your username.')
-  //   .min(2, 'Username must be at least 2 characters.')
-  //   .max(30, 'Username must not be longer than 30 characters.'),
-  password: z
+const formSchema = z
+  .object({
+    email: z.email({
+      error: (iss) =>
+        iss.input === '' ? 'Please enter your email.' : undefined,
+    }),
+    // username: z
+    //   .string('Please enter your username.')
+    //   .min(2, 'Username must be at least 2 characters.')
+    //   .max(30, 'Username must not be longer than 30 characters.'),
+    password: z
       .string()
       .min(1, 'Please enter your password.')
       .min(7, 'Password must be at least 7 characters long.'),
-  confirmPassword: z.string().min(1, 'Please confirm your password.'),
-  }).refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords don't match.",
-      path: ['confirmPassword'],
+    confirmPassword: z.string().min(1, 'Please confirm your password.'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match.",
+    path: ['confirmPassword'],
   })
 
 export function ResetPasswordForm({
@@ -52,23 +54,23 @@ export function ResetPasswordForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    const token = localStorage.getItem('forgotPassword.token'); 
-    const data_with_token = {token, ...data}
-    console.log('OtpForm submitted data:', data_with_token)  
-    toast.promise(axios.post("/api/reset-password", data_with_token), {
+    const token = localStorage.getItem('forgotPassword.token')
+    const data_with_token = { token, ...data }
+    console.log('OtpForm submitted data:', data_with_token)
+    toast.promise(api.post('/api/reset-password', data_with_token), {
       loading: 'Reset password ...',
       success: () => {
         setIsLoading(false)
         form.reset()
         // Clear stored email after successful password reset
-        localStorage.removeItem('forgotPassword.token');
+        localStorage.removeItem('forgotPassword.token')
         navigate({ to: '/sign-in' })
         return `Reset password for ${data.email}`
       },
-      error: (err) => { 
+      error: (err) => {
         setIsLoading(false)
         // Access custom error message from server response
-        return err.response?.data?.message || err;
+        return err.response?.data?.message || err
       },
     })
   }

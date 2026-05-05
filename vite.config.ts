@@ -7,34 +7,34 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { playwright } from '@vitest/browser-playwright'
 import Terminal from 'vite-plugin-terminal'
 
-function viteProxyRequestLogger(proxyReq:any, req:any, res:any) {
-    let body = '';
-    // Collect the data chunks from the request
-    req.on('data', (chunk:any) => {
-      body += chunk;
-    });
-    req.on('end', () => {
-      console.log('Proxy Request:', req.method, req.url);
-      console.log('--- Request Headers ---');
-      console.log(proxyReq.getHeaders());
-      console.log('--- Request Body ---');
-      console.log(body);
-    });
+function viteProxyRequestLogger(proxyReq: any, req: any, res: any) {
+  let body = ''
+  // Collect the data chunks from the request
+  req.on('data', (chunk: any) => {
+    body += chunk
+  })
+  req.on('end', () => {
+    console.log('Proxy Request:', req.method, req.url)
+    console.log('--- Request Headers ---')
+    console.log(proxyReq.getHeaders())
+    console.log('--- Request Body ---')
+    console.log(body)
+  })
 }
 
-function viteProxyResponesLogger(proxyRes:any, req:any, res:any) {
-    let body: any = [];
-    proxyRes.on('data', (chunk:any) => {
-      body.push(chunk);
-    });
-    proxyRes.on('end', () => {
-      body = Buffer.concat(body).toString();
-      console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode);
-      console.log('--- Response Headers ---');
-      console.log(proxyRes.headers);
-      console.log('--- Response Body ---');
-      console.log(body);
-    });
+function viteProxyResponesLogger(proxyRes: any, req: any, res: any) {
+  let body: any = []
+  proxyRes.on('data', (chunk: any) => {
+    body.push(chunk)
+  })
+  proxyRes.on('end', () => {
+    body = Buffer.concat(body).toString()
+    console.log('Proxy Response:', req.method, req.url, proxyRes.statusCode)
+    console.log('--- Response Headers ---')
+    console.log(proxyRes.headers)
+    console.log('--- Response Body ---')
+    console.log(body)
+  })
 }
 
 // https://vite.dev/config/
@@ -46,7 +46,7 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
-    Terminal(),  //{console: 'terminal'}
+    process.env.NODE_ENV === 'development' && Terminal(), //{console: 'terminal'}  // 构建环境下不启用日志插件以避免性能问题.
   ],
   resolve: {
     alias: {
@@ -63,14 +63,14 @@ export default defineConfig({
           // Log incoming requests to the proxy
           proxy.on('proxyReq', (proxyReq, req, res) => {
             viteProxyRequestLogger(proxyReq, req, res)
-          });
+          })
           proxy.on('proxyRes', (proxyRes, req, res) => {
             viteProxyResponesLogger(proxyRes, req, res)
-          });
+          })
           // Log errors during proxying
           proxy.on('error', (err, req, res) => {
-            console.error('Proxy Error:', err.message, req.url);
-          });
+            console.error('Proxy Error:', err.message, req.url)
+          })
         },
       },
       '/geerule': {
@@ -81,14 +81,14 @@ export default defineConfig({
           // Log incoming requests to the proxy
           proxy.on('proxyReq', (proxyReq, req, res) => {
             viteProxyRequestLogger(proxyReq, req, res)
-          });
+          })
           proxy.on('proxyRes', (proxyRes, req, res) => {
             viteProxyResponesLogger(proxyRes, req, res)
-          });
+          })
           // Log errors during proxying
           proxy.on('error', (err, req, res) => {
-            console.error('Proxy Error:', err.message, req.url);
-          });
+            console.error('Proxy Error:', err.message, req.url)
+          })
         },
       },
     },

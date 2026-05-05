@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { format } from 'date-fns'
+// Fake Data
+// import { conversations } from './data/convo.json'
+import { useQuery } from '@tanstack/react-query'
+import api from '@/shared/apiClient'
 import {
   ArrowLeft,
   MoreVertical,
@@ -27,9 +31,6 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { NewChat } from './components/new-chat'
 import { type ChatUser, type Convo } from './data/chat-types'
-// Fake Data
-// import { conversations } from './data/convo.json'
-import { useQuery } from '@tanstack/react-query'
 
 export function Chats() {
   const [search, setSearch] = useState('')
@@ -43,17 +44,14 @@ export function Chats() {
   const { data } = useQuery({
     queryKey: ['/api/chats'],
     queryFn: async () => {
-      const response = await fetch('/api/chats');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const res = response.json();
-      return res;
+      const response = await api.post('/api/chats')
+      const res = response.data
+      return res
     },
-  });
-  const conversations = data ?? [];
+  })
+  const conversations = data ?? []
   // Filtered data based on the search query
-  const filteredChatList = conversations.filter(({ fullName }:any) =>
+  const filteredChatList = conversations.filter(({ fullName }: any) =>
     fullName.toLowerCase().includes(search.trim().toLowerCase())
   )
 

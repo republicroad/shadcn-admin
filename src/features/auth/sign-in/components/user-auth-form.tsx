@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
+import authApi from '@/shared/authapiClient'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { useAuthStore } from '@/stores/auth'
 // import { useAuthStore } from '@/stores/auth-store'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -19,10 +22,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
-import { jwtDecode } from 'jwt-decode'
-import { useAuthStore } from '@/stores/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -34,17 +33,14 @@ const formSchema = z.object({
     .min(7, 'Password must be at least 7 characters long.'),
 })
 
-const loginUser = async (credentials: any) => {
-  credentials.username = credentials.email  // delete credentials.email
-  console.log("loginUser:", credentials);
-  // import httpClient from '../../../../api/api'
-  // const response = await httpClient.post('/api/login', credentials);
-  const response = await axios.post('/api/login', credentials); // Replace with your API endpoint
-  // const response = await fetch('/api/login', credentials);
-  // console.log("response:", response);
-  // console.log("response.data:", response.data);  
-  return response.data;
-};
+// const loginUser = async (credentials: any) => {
+//   const response = await authApi.post('/api/auth/login', {
+//     ...credentials,
+//     username: credentials.email,
+//   }) // Replace with your API endpoint
+//   console.log('loginUser response:', response)
+//   return response
+// }
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
@@ -57,7 +53,7 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { setUser, setAccessToken } = useAuthStore()
+  const { login } = useAuthStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,53 +63,43 @@ export function UserAuthForm({
     },
   })
 
-  const { mutate } = useMutation({  // isError, isSuccess, data, error
-    mutationFn: loginUser,
-    onSuccess: (data) => { // data 以后可以考虑用 typescript 类型来定义.
-      // Store token/user data in local storage or context if needed
-      if (data.status == 0){
-        // alert(data.message);
-        const  { username }: {
-                                username: string;
-                                user_id: string;
-                                exp: number;
-                                roles?: string[];
-                              } = jwtDecode(data.data.accessToken);
-        // Set user and access token
-        const user = {
-          accountNo: username,
-          email: username,
-          role: ['user'],
-          exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
-        }
-        setUser(user);
-        setAccessToken(data.data.accessToken);
-        console.log("useAuthStore.getState().user:", useAuthStore.getState().user);
-
-        // Redirect to the stored location or default to dashboard
-        const targetPath = redirectTo || '/'
-        navigate({ to: targetPath, replace: true })
-      }else{
-        alert(data.message);
-      }
-      // Invalidate relevant queries to refetch user data if a useQuery is present
-      // queryClient.invalidateQueries(['user']); 
+  const { mutateAsync } = useMutation({
+    // isError, isSuccess, data, error
+    // mutationFn: loginUser,
+    //  (credentials as { email: string }).email
+    mutationFn: async (credentials: Record<string, any>) =>
+      authApi.post('/api/auth/login', {
+        ...credentials,
+        username: credentials.email,
+      }),
+    onSuccess: async (response) => {
+      console.log('mutationFn onSuccess:', response)
+      // data 以后可以考虑用 typescript 类型来定义.
+      await login(response.data.data.accessToken) // 直接调用 login 方法来设置 user 和 accessToken, 以及 expiresAt.
+      // toast.success(data.message)
+      // 这里抛出一个错误来触发 toast 的 error 状态, 因为 login 成功后我们还需要做一些其他的操作, 比如跳转和显示 toast.
+      // throw new Error(data.message + '\n 强抛错误, 应该会在 toast 中显示')
+      const targetPath = redirectTo || '/'
+      navigate({ to: targetPath, replace: true })
     },
     onError: (error) => {
-      alert(`Login failed: ${error.message}`);
+      alert(`Login failed: ${error.message}`)
     },
-  });
+  })
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    toast.promise(sleep(0.01), {
+    toast.promise(mutateAsync(data), {
       loading: 'Signing in...',
       success: () => {
-        setIsLoading(false);
-        mutate(data); // 未来兼容 cookie 和 localstorage
+        setIsLoading(false)
         return `Welcome back, ${data.email}!`
       },
-      error: 'Error',
+      error: (err) => {
+        setIsLoading(false)
+        // Access custom error message from server response
+        return err.response?.data?.message || err
+      },
     })
   }
 

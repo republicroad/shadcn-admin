@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import api from '@/shared/apiClient'
 import { Loader2, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
@@ -17,9 +20,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import axios from 'axios'
-import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 
 const formSchema = z
   .object({
@@ -39,21 +39,19 @@ const formSchema = z
   })
 
 const registerUser = async (credentials: any) => {
-  credentials.username = credentials.email  // delete credentials.email
-  console.log("registerUser:", credentials);
-  // const response = await httpClient.post('/api/login', credentials);
-  const response = await axios.post('/api/register', credentials); // Replace with your API endpoint
-  // const response = await fetch('/api/login', credentials);
-  return response.data;
-};
-
+  const response = await api.post('/api/auth/register', {
+    ...credentials,
+    username: credentials.email,
+  }) // Replace with your API endpoint
+  return response
+}
 
 export function SignUpForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,34 +61,38 @@ export function SignUpForm({
       confirmPassword: '',
     },
   })
-  const {mutate, isError, isSuccess, data, error} = useMutation({
+  const { mutateAsync, isError, isSuccess, data, error } = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => { // data 以后可以考虑用 typescript 类型来定义.
-      // Store token/user data in local storage or context if needed
-      console.log("onSuccess:", data);
-      if (data.status == 0){
-        alert(data.message);
-        navigate({ to: '/sign-in' });
-      }else{
-        alert(data.message);
-      }
+    onSuccess: (response) => {
+      // data 以后可以考虑用 typescript 类型来定义.
+      console.log('onSuccess:', response)
+      navigate({ to: '/sign-in' })
+      // navigate({ to: '/sign-in' })
+      // if (response.data.status == 0) {
+      //   alert(data.message)
+      //   navigate({ to: '/sign-in' })
+      // } else {
+      //   alert(data.message)
+      // }
     },
     onError: (error) => {
-      alert(`Login failed: ${error.message}`);
+      alert(`Login failed: ${error.message}`)
     },
-  });
+  })
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
     // eslint-disable-next-line no-console
-    mutate(data)
-
-    toast.promise(sleep(2000), {
+    toast.promise(mutateAsync(data), {
       loading: 'Creating account...',
       success: () => {
         setIsLoading(false)
         return `Account created for ${data.email}.`
       },
-      error: 'Error',
+      error: (err) => {
+        setIsLoading(false)
+        // Access custom error message from server response
+        return err.response?.data?.message || err
+      },
     })
   }
 
