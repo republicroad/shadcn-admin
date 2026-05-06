@@ -39,10 +39,7 @@ const formSchema = z
   })
 
 const registerUser = async (credentials: any) => {
-  const response = await api.post('/api/auth/register', {
-    ...credentials,
-    username: credentials.email,
-  }) // Replace with your API endpoint
+  const response = await api.post('/api/auth/register', credentials)
   return response
 }
 
@@ -76,7 +73,7 @@ export function SignUpForm({
       // }
     },
     onError: (error) => {
-      alert(`Login failed: ${error.message}`)
+      alert(`Sign up failed: ${error.message}`)
     },
   })
   function onSubmit(data: z.infer<typeof formSchema>) {

@@ -68,10 +68,7 @@ export function UserAuthForm({
     // mutationFn: loginUser,
     //  (credentials as { email: string }).email
     mutationFn: async (credentials: Record<string, any>) =>
-      authApi.post('/api/auth/login', {
-        ...credentials,
-        username: credentials.email,
-      }),
+      authApi.post('/api/auth/login', credentials),
     onSuccess: async (response) => {
       console.log('mutationFn onSuccess:', response)
       // data 以后可以考虑用 typescript 类型来定义.

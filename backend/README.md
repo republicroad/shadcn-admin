@@ -168,3 +168,8 @@ CREATE SCHEMA public;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO public;
 ```
+
+## 参考
+
+[Bun.password.hash() with Argon2id](https://bun.com/docs/guides/util/hash-a-password)  
+[Argon2](https://en.wikipedia.org/wiki/Argon2)  

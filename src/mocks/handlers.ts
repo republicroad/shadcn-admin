@@ -8,19 +8,19 @@ import { users } from '../features/users/data/users'
 // import data1 from '../features/chats/data/convo.json' with { type: 'json' }
 
 export const handlers = [
-  // /api/auth/login 以及相关的类型，mock数据和逻辑都可以封装到一个单独的模块里, 以保持 handlers.ts 的简洁和可维护性.
-  http.post('/api/auth/login', async ({ request }) => {
-    const requestBody = await request.json()
-    return HttpResponse.json(await fake_user_login(requestBody))
-  }),
-  http.post('/api/auth/register', async ({ request }) => {
-    const requestBody = await request.json()
-    return HttpResponse.json({
-      status: 0,
-      message: '注册成功！',
-      data: {},
-    })
-  }),
+  // // /api/auth/login 以及相关的类型，mock数据和逻辑都可以封装到一个单独的模块里, 以保持 handlers.ts 的简洁和可维护性.
+  // http.post('/api/auth/login', async ({ request }) => {
+  //   const requestBody = await request.json()
+  //   return HttpResponse.json(await fake_user_login(requestBody))
+  // }),
+  // http.post('/api/auth/register', async ({ request }) => {
+  //   const requestBody = await request.json()
+  //   return HttpResponse.json({
+  //     status: 0,
+  //     message: '注册成功！',
+  //     data: {},
+  //   })
+  // }),
 
   http.all('/api/users', async ({ request }) => {
     // const requestBody = await request.json();
@@ -34,6 +34,12 @@ export const handlers = [
     // const requestBody = await request.json();
     return HttpResponse.json(conversations)
   }),
+  // /forgot-password
+  // http.all('/api/auth/forgot-password', async ({ request }) => {
+  //       // /api/forgot-password
+  //       // const requestBody = await request.json();
+  //       return HttpResponse.json(conversations);
+  // }),
 ]
 
 interface LoginUser {
