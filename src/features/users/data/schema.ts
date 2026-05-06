@@ -17,7 +17,7 @@ const userRoleSchema = z.union([
   z.literal('auditor'),    // 审计员
 ])
 
-const userSchema = z.object({
+const _userSchema = z.object({
   id: z.string(),
   firstName: z.string(),
   lastName: z.string(),
@@ -29,7 +29,7 @@ const userSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
-export type User = z.infer<typeof userSchema>
+export type User = z.infer<typeof _userSchema>
 export type userRole = z.infer<typeof userRoleSchema>
 
-export const userListSchema = z.array(userSchema)
+export const userListSchema = z.array(_userSchema)

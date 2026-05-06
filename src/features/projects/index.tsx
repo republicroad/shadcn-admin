@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
@@ -5,36 +6,35 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { UsersDialogs } from '../users/components/users-dialogs' 
+import { UsersDialogs } from '../users/components/users-dialogs'
 import { UsersPrimaryButtons } from '../users/components/users-primary-buttons'
 import { UsersProvider } from '../users/components/users-provider'
 import { UsersTable } from '../users/components/users-table'
-import { useQuery } from '@tanstack/react-query'
+
 // import { users } from './data/users'
 // console.log('projects index.tsx loaded ', __dirname);
 
 const route = getRouteApi('/_authenticated/projects/')
 
 export function Projects() {
-  console.log(import.meta.dir);
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { data } = useQuery({  // data, isLoading, isError, error 
+  const { data } = useQuery({
+    // data, isLoading, isError, error
     queryKey: ['/api/users'],
     queryFn: async () => {
-      const response = await fetch('/api/users');
+      const response = await fetch('/api/users')
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok')
       }
-      const res = response.json();
-      return res;
+      const res = response.json()
+      return res
     },
-  });
+  })
   // data is undefined initially because the query is still in the process of fetching data.
   // data 可能返回 undefined
   // data: {"status":0,"data": users}
-  const users = data?.data ?? [];
-  console.log(import.meta.dir);
+  const users = data?.data ?? []
   return (
     <UsersProvider>
       <Header fixed>

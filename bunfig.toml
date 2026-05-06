@@ -1,0 +1,10 @@
+
+# 禁止 bun 自动加载 .env 环境变量.
+# 让 vite 根据 mode 去加载对应 .env.[mode] 文件对应的环境变量.
+# https://cn.vite.dev/guide/env-and-mode#env-files
+# https://github.com/oven-sh/bun/issues/5515
+env = false
+[install]
+# 默认的registry  https://registry.npmjs.org
+# bun install --registry http://registry.npmmirror.com
+registry = "http://registry.npmmirror.com"

@@ -177,6 +177,7 @@ const AuthenticatedErrorsErrorRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
@@ -188,7 +189,6 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
-  '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -200,8 +200,8 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
-  '/users': typeof AuthenticatedUsersIndexRoute
+  '/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
@@ -261,6 +261,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/settings'
     | '/forgot-password'
     | '/otp'
@@ -272,7 +273,6 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
-    | '/'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -284,8 +284,8 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/projects'
     | '/settings/'
-    | '/tasks'
-    | '/users'
+    | '/tasks/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -361,7 +361,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -452,14 +452,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/users/'
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
       path: '/tasks'
-      fullPath: '/tasks'
+      fullPath: '/tasks/'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
@@ -473,14 +473,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/projects/': {
       id: '/_authenticated/projects/'
       path: '/projects'
-      fullPath: '/projects'
+      fullPath: '/projects/'
       preLoaderRoute: typeof AuthenticatedProjectsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
-      fullPath: '/help-center'
+      fullPath: '/help-center/'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
@@ -494,14 +494,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
-      fullPath: '/chats'
+      fullPath: '/chats/'
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
-      fullPath: '/apps'
+      fullPath: '/apps/'
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }

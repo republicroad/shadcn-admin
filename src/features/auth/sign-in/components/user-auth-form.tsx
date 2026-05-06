@@ -26,12 +26,12 @@ import { useAuthStore } from '@/stores/auth'
 
 const formSchema = z.object({
   email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email' : undefined),
+    error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
   }),
   password: z
     .string()
-    .min(1, 'Please enter your password')
-    .min(7, 'Password must be at least 7 characters long'),
+    .min(1, 'Please enter your password.')
+    .min(7, 'Password must be at least 7 characters long.'),
 })
 
 const loginUser = async (credentials: any) => {
@@ -149,7 +149,7 @@ export function UserAuthForm({
               <FormMessage />
               <Link
                 to='/forgot-password'
-                className='absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
+                className='absolute inset-e-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
               >
                 Forgot password?
               </Link>
