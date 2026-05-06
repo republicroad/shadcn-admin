@@ -194,11 +194,11 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
-  '/chats': typeof AuthenticatedChatsIndexRoute
-  '/counter': typeof AuthenticatedCounterIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
-  '/projects': typeof AuthenticatedProjectsIndexRoute
+  '/apps/': typeof AuthenticatedAppsIndexRoute
+  '/chats/': typeof AuthenticatedChatsIndexRoute
+  '/counter/': typeof AuthenticatedCounterIndexRoute
+  '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/projects/': typeof AuthenticatedProjectsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
@@ -278,11 +278,11 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
-    | '/apps'
-    | '/chats'
-    | '/counter'
-    | '/help-center'
-    | '/projects'
+    | '/apps/'
+    | '/chats/'
+    | '/counter/'
+    | '/help-center/'
+    | '/projects/'
     | '/settings/'
     | '/tasks/'
     | '/users/'
@@ -487,7 +487,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated/counter/': {
       id: '/_authenticated/counter/'
       path: '/counter'
-      fullPath: '/counter'
+      fullPath: '/counter/'
       preLoaderRoute: typeof AuthenticatedCounterIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
