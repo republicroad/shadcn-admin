@@ -46,6 +46,8 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    // 可以把 forgot-password 的 email 和 token 存在 localStorage 中, 这样在 OTP 验证成功后就可以
+    // 直接从 localStorage 中获取 email 和 token 来进行下一步的操作, 而不需要在 navigate 的时候传递这些信息了.
     const email = localStorage.getItem('forgotPassword.email')
     const data_with_email = { email: email, ...data }
     console.log('OtpForm submitted data:', data_with_email)
