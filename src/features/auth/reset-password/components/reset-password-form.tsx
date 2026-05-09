@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import api from '@/shared/apiClient'
-import { Loader2, UserPlus } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +25,10 @@ const formSchema = z
       error: (iss) =>
         iss.input === '' ? 'Please enter your email.' : undefined,
     }),
+    // username: z
+    //   .string('Please enter your username.')
+    //   .min(2, 'Username must be at least 2 characters.')
+    //   .max(30, 'Username must not be longer than 30 characters.'),
     password: z
       .string()
       .min(1, 'Please enter your password.')
@@ -38,55 +40,32 @@ const formSchema = z
     path: ['confirmPassword'],
   })
 
-const registerUser = async (credentials: any) => {
-  const response = await api.post('/api/auth/register', {
-    ...credentials,
-    username: credentials.email,
-  }) // Replace with your API endpoint
-  return response
-}
-
-export function SignUpForm({
+export function ResetPasswordForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) {
-  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+    defaultValues: { email: '' },
   })
-  const { mutateAsync, isError, isSuccess, data, error } = useMutation({
-    mutationFn: registerUser,
-    onSuccess: (response) => {
-      // data 以后可以考虑用 typescript 类型来定义.
-      console.log('onSuccess:', response)
-      navigate({ to: '/sign-in' })
-      // navigate({ to: '/sign-in' })
-      // if (response.data.status == 0) {
-      //   alert(data.message)
-      //   navigate({ to: '/sign-in' })
-      // } else {
-      //   alert(data.message)
-      // }
-    },
-    onError: (error) => {
-      alert(`Login failed: ${error.message}`)
-    },
-  })
-  function onSubmit(data: z.infer<typeof formSchema>) {
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    toast.promise(mutateAsync(data), {
-      loading: 'Creating account...',
+    const token = localStorage.getItem('forgotPassword.token')
+    const data_with_token = { token, ...data }
+    console.log('OtpForm submitted data:', data_with_token)
+    toast.promise(api.post('/api/reset-password', data_with_token), {
+      loading: 'Reset password ...',
       success: () => {
         setIsLoading(false)
-        return `Account created for ${data.email}.`
+        form.reset()
+        // Clear stored email after successful password reset
+        localStorage.removeItem('forgotPassword.token')
+        navigate({ to: '/sign-in' })
+        return `Reset password for ${data.email}`
       },
       error: (err) => {
         setIsLoading(false)
@@ -100,7 +79,7 @@ export function SignUpForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-3', className)}
+        className={cn('grid gap-2', className)}
         {...props}
       >
         <FormField
@@ -143,39 +122,9 @@ export function SignUpForm({
           )}
         />
         <Button className='mt-2' disabled={isLoading}>
-          {isLoading ? <Loader2 className='animate-spin' /> : <UserPlus />}
-          Create Account
+          Update Password
+          {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRight />}
         </Button>
-
-        <div className='relative my-2'>
-          <div className='absolute inset-0 flex items-center'>
-            <span className='w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-2 gap-2'>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconGithub className='h-4 w-4' /> GitHub
-          </Button>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button>
-        </div>
       </form>
     </Form>
   )

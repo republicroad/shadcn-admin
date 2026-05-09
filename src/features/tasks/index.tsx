@@ -1,3 +1,6 @@
+// import { tasks } from './data/tasks'
+import { useQuery } from '@tanstack/react-query'
+import api from '@/shared/apiClient'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -8,24 +11,18 @@ import { TasksDialogs } from './components/tasks-dialogs'
 import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import { TasksProvider } from './components/tasks-provider'
 import { TasksTable } from './components/tasks-table'
-// import { tasks } from './data/tasks'
-import { useQuery } from '@tanstack/react-query'
-
 
 export default function Tasks() {
   const { data } = useQuery({
     queryKey: ['/api/tasks'],
     queryFn: async () => {
-      const response = await fetch('/api/tasks');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const res = response.json();
-      return res;
+      const response = await api.post('/api/tasks')
+      const res = response.data
+      return res
     },
-  });
+  })
 
-  const tasks = data ?? [];
+  const tasks = data ?? []
   return (
     <TasksProvider>
       <Header fixed>

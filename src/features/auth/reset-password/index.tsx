@@ -8,32 +8,31 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
-import { OtpForm } from './components/otp-form'
+import { ResetPasswordForm } from './components/reset-password-form'
 
-export function Otp() {
+export function ResetPassword() {
   return (
     <AuthLayout>
-      <Card className='max-w-md gap-4'>
+      <Card className='max-w-sm gap-4 sm:min-w-sm'>
         <CardHeader>
-          <CardTitle className='text-base tracking-tight'>
-            Two-factor Authentication
+          <CardTitle className='text-lg tracking-tight'>
+            Reset Password
           </CardTitle>
           <CardDescription>
-            Please enter the authentication code. <br /> We have sent the
-            authentication code to your email.
+            Enter your new password and confirm new password.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <OtpForm />
+          <ResetPasswordForm />
         </CardContent>
         <CardFooter>
-          <p className='px-8 text-center text-sm text-muted-foreground'>
-            Haven't received it?{' '}
+          <p className='mx-auto px-8 text-center text-sm text-balance text-muted-foreground'>
+            Don't have an account?{' '}
             <Link
-              to='/forgot-password'
+              to='/sign-up'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Resend a new code.
+              Sign up
             </Link>
             .
           </p>

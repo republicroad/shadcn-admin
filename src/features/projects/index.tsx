@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
+import api from '@/shared/apiClient'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -23,11 +24,8 @@ export function Projects() {
     // data, isLoading, isError, error
     queryKey: ['/api/users'],
     queryFn: async () => {
-      const response = await fetch('/api/users')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      const res = response.json()
+      const response = await api.post('/api/users')
+      const res = response.data
       return res
     },
   })

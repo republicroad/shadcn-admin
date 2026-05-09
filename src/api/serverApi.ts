@@ -1,4 +1,14 @@
-import  httpClient  from './api'
+import axios from 'axios';
+
+const BASE_URL = 'http://localhost:8000/api/';
+
+const httpClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+});
+
+
+httpClient.defaults.headers.common['Content-Type'] = 'application/json';
 
 export async function fetchCounterList() {
   const response = await httpClient.get('/api/counter');

@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
+import api from '@/shared/apiClient'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -9,7 +11,7 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-import { useQuery } from '@tanstack/react-query'
+
 // import { users } from './data/users'
 
 const route = getRouteApi('/_authenticated/users/')
@@ -17,21 +19,19 @@ const route = getRouteApi('/_authenticated/users/')
 export function Users() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { data } = useQuery({  // data, isLoading, isError, error 
+  const { data } = useQuery({
+    // data, isLoading, isError, error
     queryKey: ['/api/users'],
     queryFn: async () => {
-      const response = await fetch('/api/users');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const res = response.json();
-      return res;
+      const response = await api.post('/api/users')
+      const res = response.data
+      return res
     },
-  });
+  })
   // data is undefined initially because the query is still in the process of fetching data.
   // data 可能返回 undefined
   // data: {"status":0,"data": users}
-  const users = data?.data ?? [];
+  const users = data?.data ?? []
 
   return (
     <UsersProvider>
