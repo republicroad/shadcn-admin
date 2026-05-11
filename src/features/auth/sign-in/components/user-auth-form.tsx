@@ -8,9 +8,10 @@ import authApi from '@/shared/authapiClient'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { getErrorMessage } from '@/lib/get-error-message'
 import { useAuthStore } from '@/stores/auth'
 // import { useAuthStore } from '@/stores/auth-store'
-import { sleep, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -79,8 +80,8 @@ export function UserAuthForm({
       const targetPath = redirectTo || '/'
       navigate({ to: targetPath, replace: true })
     },
-    onError: (error) => {
-      alert(`Login failed: ${error.message}`)
+    onError: () => {
+      setIsLoading(false)
     },
   })
 
@@ -92,11 +93,7 @@ export function UserAuthForm({
         setIsLoading(false)
         return `Welcome back, ${data.email}!`
       },
-      error: (err) => {
-        setIsLoading(false)
-        // Access custom error message from server response
-        return err.response?.data?.message || err
-      },
+      error: (err) => getErrorMessage(err, 'Login failed. Please try again.'),
     })
   }
 

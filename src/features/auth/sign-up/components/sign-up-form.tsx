@@ -8,7 +8,8 @@ import api from '@/shared/apiClient'
 import { Loader2, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
-import { sleep, cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/get-error-message'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -58,7 +59,7 @@ export function SignUpForm({
       confirmPassword: '',
     },
   })
-  const { mutateAsync, isError, isSuccess, data, error } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: registerUser,
     onSuccess: (response) => {
       // data 以后可以考虑用 typescript 类型来定义.
@@ -72,8 +73,8 @@ export function SignUpForm({
       //   alert(data.message)
       // }
     },
-    onError: (error) => {
-      alert(`Sign up failed: ${error.message}`)
+    onError: () => {
+      setIsLoading(false)
     },
   })
   function onSubmit(data: z.infer<typeof formSchema>) {
@@ -85,11 +86,7 @@ export function SignUpForm({
         setIsLoading(false)
         return `Account created for ${data.email}.`
       },
-      error: (err) => {
-        setIsLoading(false)
-        // Access custom error message from server response
-        return err.response?.data?.message || err
-      },
+      error: (err) => getErrorMessage(err, 'Sign up failed. Please try again.'),
     })
   }
 

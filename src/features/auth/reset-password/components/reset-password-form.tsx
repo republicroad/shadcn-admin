@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -6,7 +6,8 @@ import { useNavigate } from '@tanstack/react-router'
 import api from '@/shared/apiClient'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep, cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/get-error-message'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -52,6 +53,19 @@ export function ResetPasswordForm({
     defaultValues: { email: '' },
   })
 
+  useEffect(() => {
+    const email = localStorage.getItem('forgotPassword.email')
+    const token = localStorage.getItem('forgotPassword.token')
+
+    if (!email || !token) {
+      toast.error('Please restart the password reset flow.')
+      navigate({ to: '/forgot-password', replace: true })
+      return
+    }
+
+    form.setValue('email', email, { shouldValidate: true })
+  }, [form, navigate])
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
     const token = localStorage.getItem('forgotPassword.token')
@@ -59,18 +73,18 @@ export function ResetPasswordForm({
     console.log('OtpForm submitted data:', data_with_token)
     toast.promise(api.post('/api/auth/reset-password', data_with_token), {
       loading: 'Reset password ...',
-      success: () => {
+      success: (response) => {
         setIsLoading(false)
         form.reset()
         // Clear stored email after successful password reset
         localStorage.removeItem('forgotPassword.token')
+        localStorage.removeItem('forgotPassword.email')
         navigate({ to: '/sign-in' })
-        return `Reset password for ${data.email}`
+        return response.data.message || `Reset password for ${data.email}`
       },
       error: (err) => {
         setIsLoading(false)
-        // Access custom error message from server response
-        return err.response?.data?.message || err
+        return getErrorMessage(err, 'Reset password failed.')
       },
     })
   }
@@ -89,7 +103,12 @@ export function ResetPasswordForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='name@example.com' {...field} />
+                <Input
+                  placeholder='name@example.com'
+                  readOnly
+                  disabled
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

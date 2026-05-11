@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
+import { getErrorMessage } from './get-error-message'
 
 export function handleServerError(error: unknown) {
   if (import.meta.env.DEV) {
@@ -19,10 +20,7 @@ export function handleServerError(error: unknown) {
   }
 
   if (error instanceof AxiosError) {
-    const title = error.response?.data?.title
-    if (typeof title === 'string' && title.length > 0) {
-      errMsg = title
-    }
+    errMsg = getErrorMessage(error, errMsg)
   }
 
   toast.error(errMsg)

@@ -6,7 +6,8 @@ import { useNavigate } from '@tanstack/react-router'
 import api from '@/shared/apiClient'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep, cn } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/get-error-message'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -40,19 +41,18 @@ export function ForgotPasswordForm({
     setIsLoading(true)
     toast.promise(api.post('/api/auth/email_otp', data), {
       loading: 'Sending email...',
-      success: () => {
+      success: (response) => {
         // Store email for later use in OTP verification
         // todo: 可以考虑把 email 存在 context 或者 global store 中，而不是 localStorage，这样更安全一些
         localStorage.setItem('forgotPassword.email', data.email)
         setIsLoading(false)
         form.reset()
         navigate({ to: '/otp' })
-        return `Email sent to ${data.email}`
+        return response.data.message || `Email sent to ${data.email}`
       },
       error: (err) => {
         setIsLoading(false)
-        // Access custom error message from server response
-        return err.response?.data?.message || err
+        return getErrorMessage(err, 'Failed to send email.')
       },
     })
   }

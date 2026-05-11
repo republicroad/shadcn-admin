@@ -30,9 +30,6 @@ authApi.interceptors.response.use(
     if (error.config) {
       console.log('Request failed for URL:', error.config.url)
     }
-    if (error.response?.status === 401) {
-      window.location.href = '/login'
-    }
     return Promise.reject(error)
   }
 )

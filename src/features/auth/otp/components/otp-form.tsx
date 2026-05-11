@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
 import api from '@/shared/apiClient'
 import { toast } from 'sonner'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { getErrorMessage } from '@/lib/get-error-message'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -57,7 +57,6 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
           const token = response.data.token // Assuming the token is in the response data
           console.log('OTP verification successful, received token:', token)
           localStorage.setItem('forgotPassword.token', token)
-          localStorage.removeItem('forgotPassword.email')
           setIsLoading(false)
           navigate({ to: '/reset-password' })
         } else {
@@ -68,8 +67,7 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
       error: (err) => {
         console.log('OTP verification failed:', err)
         setIsLoading(false)
-        // Access custom error message from server response
-        return err.response?.data?.message || err
+        return getErrorMessage(err, 'OTP verification failed.')
         // throw new Error(err.response?.data?.message || err) // 这里抛出一个错误来触发 toast 的 error 状态, 因为 OTP 验证失败后我们还需要做一些其他的操作, 比如保持在当前页面和显示 toast.
       },
     })
