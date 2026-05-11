@@ -23,7 +23,8 @@ import {
   GalleryVerticalEnd,
   ProjectorIcon,
   RulerIcon,
-  EyeOff
+  EyeOff,
+  ListOrdered,
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -79,6 +80,20 @@ export const sidebarData: SidebarData = {
           title: '花名册',
           url: '/rosters',
           // icon: ListTodo,
+        },
+        {
+          title: '名单管理',
+          icon: ListOrdered,
+          items:[
+            {
+              title: '名单列表',
+              url: '/formList/list',
+            },
+            {
+              title: '名单详情',
+              url: '/formList/detail',
+            },
+          ]
         },
         {
           title: '通知',
