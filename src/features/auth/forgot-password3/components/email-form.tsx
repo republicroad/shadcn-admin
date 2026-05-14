@@ -2,16 +2,12 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import authApi from '@/shared/authapiClient'
-import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { useAuthStore } from '@/stores/auth'
 // import { useAuthStore } from '@/stores/auth-store'
 import { sleep, cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -21,16 +17,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
 
 const formSchema = z.object({
   email: z.email({
     error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
   }),
-  password: z
-    .string()
-    .min(1, 'Please enter your password.')
-    .min(7, 'Password must be at least 7 characters long.'),
 })
 
 // const loginUser = async (credentials: any) => {
@@ -42,42 +33,39 @@ const formSchema = z.object({
 //   return response
 // }
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
+interface FormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
 }
 
-export function UserAuthForm({
+export function ForgotPasswordEmailForm({
   className,
   redirectTo,
   ...props
-}: UserAuthFormProps) {
+}: FormProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
   const { login } = useAuthStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
+    mode: 'onBlur',
   })
 
   const { mutateAsync } = useMutation({
     // isError, isSuccess, data, error
     // mutationFn: loginUser,
     //  (credentials as { email: string }).email
-    mutationFn: async (credentials: Record<string, any>) =>
-      authApi.post('/api/auth/login', credentials),
+    mutationFn: async (credentials: Record<string, unknown>) => {
+      console.log(credentials)
+    },
+    // authApi.post('/api/auth/login', credentials),
     onSuccess: async (response) => {
       console.log('mutationFn onSuccess:', response)
       // data 以后可以考虑用 typescript 类型来定义.
       await login(response.data.data.accessToken) // 直接调用 login 方法来设置 user 和 accessToken, 以及 expiresAt.
       // toast.success(data.message)
-      // 这里抛出一个错误来触发 toast 的 error 状态, 因为 login 成功后我们还需要做一些其他的操作, 比如跳转和显示 toast.
-      // throw new Error(data.message + '\n 强抛错误, 应该会在 toast 中显示')
-      const targetPath = redirectTo || '/'
-      navigate({ to: targetPath, replace: true })
     },
     onError: (error) => {
       alert(`Login failed: ${error.message}`)
@@ -120,49 +108,10 @@ export function UserAuthForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormItem className='relative'>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-              <Link
-                to='/forgot-password2'
-                className='absolute inset-e-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
-              >
-                Forgot password?
-              </Link>
-            </FormItem>
-          )}
-        />
-        <Button className='mt-2' disabled={isLoading}>
+        {/* <Button className='mt-2' disabled={isLoading}>
           {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
           Sign in
-        </Button>
-
-        <div className='relative my-2'>
-          <div className='absolute inset-0 flex items-center'>
-            <span className='w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-2 gap-2'>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconGithub className='h-4 w-4' /> GitHub
-          </Button>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button>
-        </div>
+        </Button> */}
       </form>
     </Form>
   )

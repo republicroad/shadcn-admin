@@ -1,28 +1,32 @@
-
 # brde web admin
 
 基于 Shadcn Admin Dashboard 研发 brde web admin 项目. 使用 bun 进行项目管理.
 
-## typescript
+## components
 
+### stepper
+
+[Stepperize](https://www.shadcn.io/template/damianricobelli-shadcn-stepper)  
+[reui stepper](https://reui.io/components/stepper)
+
+## typescript
 
 ### null and undefined
 
 [Beginner’s Guide: How to Check Null and Undefined in TypeScript](https://javascript.plainenglish.io/beginners-guide-how-to-check-null-and-undefined-in-typescript-c6492a07b609)
 
+In TypeScript, when comparing a value to undefined, both the loose equality operator (==) and the strict equality operator (===) can be used, but they have different behaviors and implications:
 
-In TypeScript, when comparing a value to undefined, both the loose equality operator (==) and the strict equality operator (===) can be used, but they have different behaviors and implications:  
-
-- Loose Equality (==):  
+- Loose Equality (==):
 
   The == operator performs type coercion before comparison. This means it attempts to convert the operands to a common type before checking their values.
-When comparing undefined using ==, it will evaluate to true if the other operand is either null or undefined.
-Example: null == undefined evaluates to true.
+  When comparing undefined using ==, it will evaluate to true if the other operand is either null or undefined.
+  Example: null == undefined evaluates to true.
 
-- Strict Equality (===):  
+- Strict Equality (===):
 
   The === operator performs a strict comparison, meaning it checks both the value and the type of the operands without any type coercion.
-  When comparing undefined using ===, it will only evaluate to true if the other operand is exactly undefined. It will not consider null to be equal to undefined.  
+  When comparing undefined using ===, it will only evaluate to true if the other operand is exactly undefined. It will not consider null to be equal to undefined.
 
   Example: null === undefined evaluates to false.  
   Recommendation:
@@ -33,60 +37,53 @@ Example: null == undefined evaluates to true.
   - Clarity:  
     It clearly indicates that you are looking for an exact match of both value and type.
   - Type Safety:  
-    In TypeScript, strict equality aligns better with the type system, as it ensures that you are comparing values of the same type.  
-    
+    In TypeScript, strict equality aligns better with the type system, as it ensures that you are comparing values of the same type.
 
 When == might be used: While === is preferred, there are specific cases where == null might be used as a shorthand to check for both null and undefined simultaneously, as value == null will be true if value is either null or undefined. However, value === undefined should be used if the intent is to strictly check for undefined only.
-
-
 
 ## vite
 
 [Environment Variables in Vite React Application](https://javascript.plainenglish.io/environment-variables-in-vite-react-application-ca2d5051ee7c)  
-[Simplifying API Proxies in Vite: A Guide to vite.config.js](https://medium.com/@eric_abell/simplifying-api-proxies-in-vite-a-guide-to-vite-config-js-a5cc3a091a2f)  
+[Simplifying API Proxies in Vite: A Guide to vite.config.js](https://medium.com/@eric_abell/simplifying-api-proxies-in-vite-a-guide-to-vite-config-js-a5cc3a091a2f)
 
 ## react
 
-- [React: 用于构建 Web 和原生交互界面的库](https://zh-hans.react.dev/)  
+- [React: 用于构建 Web 和原生交互界面的库](https://zh-hans.react.dev/)
 
-- [快速入门](https://zh-hans.react.dev/learn)  
-  - [教程：井字棋游戏](https://zh-hans.react.dev/learn/tutorial-tic-tac-toe)  
+- [快速入门](https://zh-hans.react.dev/learn)
+  - [教程：井字棋游戏](https://zh-hans.react.dev/learn/tutorial-tic-tac-toe)
 
-- [描述 UI: 制作可重用、可嵌套的组件](https://zh-hans.react.dev/learn/describing-the-ui)  
-- [UI组件状态更新](https://zh-hans.react.dev/learn/adding-interactivity)  
-- [状态管理: 组件间的状态隔离与共享](https://zh-hans.react.dev/learn/managing-state)  
-- [组件与外部状态](https://zh-hans.react.dev/learn/escape-hatches)  
-
+- [描述 UI: 制作可重用、可嵌套的组件](https://zh-hans.react.dev/learn/describing-the-ui)
+- [UI组件状态更新](https://zh-hans.react.dev/learn/adding-interactivity)
+- [状态管理: 组件间的状态隔离与共享](https://zh-hans.react.dev/learn/managing-state)
+- [组件与外部状态](https://zh-hans.react.dev/learn/escape-hatches)
 
 ### hooks
 
 react hook 用来修改组件状态，协调组件之间的状态变化, 控制组件和外部交互的变化.
 
 [React 内置 Hook](https://zh-hans.react.dev/reference/react/hooks)  
-[usehooks.com: A collection of modern, server-safe React hooks – from the ui.dev team](https://usehooks.com/)  
-
+[usehooks.com: A collection of modern, server-safe React hooks – from the ui.dev team](https://usehooks.com/)
 
 ## [tanstack-router](https://tanstack.com/router/latest)
 
-补充 tanstack-router 的特点和用法  
+补充 tanstack-router 的特点和用法
 
-[TanStack Router v1 docs:](https://tanstack.com/router/latest/docs/framework/react/overview)  
+[TanStack Router v1 docs:](https://tanstack.com/router/latest/docs/framework/react/overview)
 
-示例程序: 
-[TanStack Router React Example: Kitchen Sink File Based](https://tanstack.com/router/latest/docs/framework/react/examples/kitchen-sink-file-based)  
+示例程序:
+[TanStack Router React Example: Kitchen Sink File Based](https://tanstack.com/router/latest/docs/framework/react/examples/kitchen-sink-file-based)
 
 ## [tanstack-query](https://tanstack.com/query/latest)
 
-补充 tanstack-query 的特点和用法  
+补充 tanstack-query 的特点和用法
 
-[TanStack Query v5](https://tanstack.com/query/latest/docs/framework/react/overview)  
+[TanStack Query v5](https://tanstack.com/query/latest/docs/framework/react/overview)
 
-示例程序: 
+示例程序:
 [TanStack Query React Example: Basic](https://tanstack.com/query/latest/docs/framework/react/examples/basic)
 
-
-[React Query - useMutation](https://dev.to/this-is-learning/react-query-usemutation-2cmg)  
-
+[React Query - useMutation](https://dev.to/this-is-learning/react-query-usemutation-2cmg)
 
 ## mock api server
 
@@ -95,10 +92,10 @@ react hook 用来修改组件状态，协调组件之间的状态变化, 控制�
 这是一个用于 mock 请求数据的库，在 node 和 浏览器的 worker 层面拦截网络请求. 这个mock库可以在调试工具的 network 中看到网络请求.
 这个适合用于加速前端页面开发和调试.
 
-
 ### axios-mock-adapter
 
 在main.tsx中加入此逻辑，表示在开发环境下动态导入 mocker 相关的模块. 这个mock工具的缺点是无法再调试工具看到网络请求.
+
 ```ts
 if (import.meta.env.DEV)
 {
@@ -111,7 +108,6 @@ if (import.meta.env.DEV)
 ## [tailwindcss](https://tailwindcss.com/)
 
 补充 tailwindcss 的特点和用法
-
 
 ## proxychains4
 
@@ -129,7 +125,7 @@ apt install proxychains4
 socks5  192.168.1.201 1080
 ```
 
-## [bun 安装 ](https://www.bunjs.cn/docs/installation) 
+## [bun 安装 ](https://www.bunjs.cn/docs/installation)
 
 Bun 是用于运行 JavaScript 和 TypeScript 应用程序的集成工具包。它以单一可执行文件的形式发布，文件名为 bun。
 
@@ -155,17 +151,17 @@ bun --version
 
 ```bash
 # 依赖安装
-bun install 
+bun install
 
 # 运行
 bun run dev
 bun run dev  # 如果电脑上安装了 node
 ```
 
-如果电脑上安装了 node 和 bun, 想强制程序使用 bun 的运行时, 请使用下列命令:  
+如果电脑上安装了 node 和 bun, 想强制程序使用 bun 的运行时, 请使用下列命令:
 
 ```bash
-bun -b run dev 
+bun -b run dev
 ```
 
 # Shadcn Admin Dashboard
