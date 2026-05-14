@@ -10,15 +10,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { _List } from '../data/schema'
-import { useList } from './list-provider'
+import { detailList } from '../data/schema'
+import { useDetailList } from './detail-provider'
 
 type DataTableRowActionsProps = {
-  row: Row<_List>
+  row: Row<detailList>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useList()
+  const { setOpen, setCurrentRow } = useDetailList()
   return (
     <>
       <DropdownMenu modal={false}>
@@ -32,30 +32,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-40'>
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(row.original)
-              setOpen('import')
-            }}
-          >
-            Import
-            <DropdownMenuShortcut>
-              <FolderUp size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(row.original)
-              setOpen('export')
-            }}
-          >
-            Export
-            <DropdownMenuShortcut>
-              <FolderDown size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original)

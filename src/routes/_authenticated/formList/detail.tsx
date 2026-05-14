@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Detail } from '@/features/formList/detail'
+import DetailList  from '@/features/formList/detail'
 
 export const Route = createFileRoute('/_authenticated/formList/detail')({
-  component: Detail,
+  component: DetailList,
 })

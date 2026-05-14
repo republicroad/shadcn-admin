@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { Link } from '@tanstack/react-router'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type _List } from '../data/schema'
@@ -12,7 +13,7 @@ export const listColumns: ColumnDef<_List>[] = [
       <DataTableColumnHeader column={column} title='名单名称' />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-36 ps-3'>{row.getValue('list_name')}</LongText>
+      <Link to={`/formList/detail?list_id=${row.getValue('list_id')}`}><LongText className='max-w-36 ps-3'>{row.getValue('list_name')}</LongText></Link>
     ),
     enableSorting: false
   },
@@ -22,7 +23,9 @@ export const listColumns: ColumnDef<_List>[] = [
       <DataTableColumnHeader column={column} title='名单编号' />
     ),
     cell: ({ row }) => (
-      <div className='w-fit ps-2 text-nowrap'>{row.getValue('list_id')}</div>
+      <div className='w-fit ps-2 text-nowrap'>
+        <button onClick={() => navigator.clipboard.writeText(row.getValue('list_id'))}>{row.getValue('list_id')}</button>
+      </div>
     ),
     enableSorting: false
   },

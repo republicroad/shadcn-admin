@@ -1,3 +1,4 @@
+
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,56 +20,38 @@ import {
   FormItem,
   FormLabel
 } from '@/components/ui/form'
+import { RadioGroup,  RadioGroupItem} from '@/components/ui/radio-group'
 import { Input } from '@/components/ui/input'
 import { _List } from '../data/schema'
+
 
 const formSchema = z.object({
   list_name: z.string(),
   list_id: z.string(),
-  file: z
-    .instanceof(FileList)
-    .refine((files) => files.length > 0, {
-      message: 'Please upload a file.',
-    })
-    .refine(
-      (files) => ['text/csv', 'application/vnd.ms-excel'].includes(files?.[0]?.type),
-      'Please upload csv/xlsx format.'
-    ),
+  file_type: z.string()
 })
 
-type ListImportDialogProps = {
+type ListExportDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   currentRow: _List
 }
 
-export function ListImportDialog({
+export function ListExportDialog({
   open,
   onOpenChange,
   currentRow
-}: ListImportDialogProps) {
+}: ListExportDialogProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { 
       list_name: currentRow? currentRow.list_name: '',
       list_id: currentRow? currentRow.list_id: '',
-      file: undefined 
+      file_type: ''
     },
   })
 
-  const fileRef = form.register('file')
-
   const onSubmit = () => {
-    const file = form.getValues('file')
-
-    if (file && file[0]) {
-      const fileDetails = {
-        name: file[0].name,
-        size: file[0].size,
-        type: file[0].type,
-      }
-      showSubmittedData(fileDetails, 'You have imported the following file:')
-    }
     onOpenChange(false)
   }
 
@@ -82,13 +65,13 @@ export function ListImportDialog({
     >
       <DialogContent className='gap-2 sm:max-w-sm'>
         <DialogHeader className='text-start'>
-          <DialogTitle> 文件导入</DialogTitle>
+          <DialogTitle> 文件导出</DialogTitle>
           <DialogDescription>
-            Import list quickly from a csv/xlxs file.
+            Export list quickly from a csv/xlxs file.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form id='list-import-form' onSubmit={form.handleSubmit(onSubmit)}>
+          <form id='list-export-form' onSubmit={form.handleSubmit(onSubmit)}>
             <FormField 
               control={form.control}
               name='list_id'
@@ -98,7 +81,7 @@ export function ListImportDialog({
                   <FormControl>
                     <Input
                       disabled
-                      defaultValue={currentRow.list_id}
+                      placeholder={currentRow.list_id}
                       className='h-8 py-0'
                     />
                   </FormControl>
@@ -114,7 +97,7 @@ export function ListImportDialog({
                   <FormControl>
                     <Input
                       disabled
-                      defaultValue={currentRow.list_name}
+                      placeholder={currentRow.list_name}
                       className='h-8 py-0'
                     />
                   </FormControl>
@@ -123,18 +106,30 @@ export function ListImportDialog({
             />
             <FormField 
               control={form.control}
-              name='file'
-              render={() => (
-                <FormItem className='my-2'>
-                  <FormLabel>File</FormLabel>
+              name='file_type'
+              render={( field ) => (
+                <FormItem className='my-2' >
+                  <FormLabel>文件类型</FormLabel>
                   <FormControl>
-                    <Input
-                      type='file'
-                      accept='text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                      {...fileRef}
-                      className='h-8 py-0'
-                    />
+                      <RadioGroup
+                      defaultValue='csv'
+                      className='flex flex-col space-y-1'
+                    >
+                      <FormItem className='flex items-center'>
+                        <FormControl>
+                          <RadioGroupItem value='csv' />
+                        </FormControl>
+                        <FormLabel className='font-normal'>csv</FormLabel>
+                      </FormItem>
+                      <FormItem className='flex items-center'>
+                        <FormControl>
+                          <RadioGroupItem value='xlsx' />
+                        </FormControl>
+                        <FormLabel className='font-normal'>xlsx</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
                   </FormControl>
+
                 </FormItem>
               )}
             />
@@ -144,7 +139,7 @@ export function ListImportDialog({
           <DialogClose asChild>
             <Button variant='outline'>Close</Button>
           </DialogClose>
-          <Button type='submit' form='list-import-form'>
+          <Button type='submit' form='list-export-form'>
             Import
           </Button>
         </DialogFooter>
