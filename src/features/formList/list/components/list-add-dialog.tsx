@@ -23,8 +23,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
 import { _List } from '../data/schema'
+import { createFormList } from "@/api/serverApi"
+
 
 const formSchema = z
   .object({
@@ -50,13 +51,29 @@ export function ListCreateDialog({
       list_name: ''
     },
   })
+  const addMutation = useMutation({
+    mutationFn: async (values: ListForm) => {
+      const res = await createFormList(values.user_id, values.list_name)
+      return await res
+    },
+  })
 
 
   const onSubmit = (values: ListForm) => {
+    addMutation.mutate(values, {
+      onSuccess: () =>{
+        toast.promise(sleep(0.01), {
+          loading: 'add new list...',
+          success: () => {
+            return   `add new list ${values.list_name} success`
+          },
+          error: 'Error',
+        })
+        queryClient.invalidateQueries({ queryKey: ['/formList/list'] })
+      }
+    })
     form.reset()
-    showSubmittedData(values)
     onOpenChange(false)
-    console.log('Submitted data:', values)
   }
 
   return (

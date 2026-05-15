@@ -3,13 +3,14 @@ import { DetailListCreateDialog } from './detail-add-dialog'
 import { DetailListDeleteDialog } from './detail-delete-dialog'
 import { useDetailList } from './detail-provider'
 
-export function DetailListDialogs() {
+
+export function DetailListDialogs( listData: any) {
   
   const { open, setOpen, currentRow, setCurrentRow } = useDetailList()
   const [initForm, setInit] = useState({});
   const originForm = {
-    list_id: '',
-    list_name: '账户黑名单',
+    list_id: listData.list_id || '',
+    list_name: listData.list_name || '',
     value: '',
     tag: '',
     create_time: '',

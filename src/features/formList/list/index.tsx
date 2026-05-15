@@ -11,17 +11,17 @@ import { ListProvider } from './components/list-provider'
 import { ListTable } from './components/list-table'
 import { ListDialogs } from './components/list-dialog'
 import { list_data }  from './data/data'
+import { fetchFormList } from "@/api/serverApi"
 
 export default function List() {
-//   const { data } = useQuery({
-//     queryKey: ['/api/tasks'],
-//     queryFn: async () => {
-//       const response = await api.post('/api/tasks')
-//       const res = response.data
-//       return res
-//     },
-//   })
-
+  const { data } = useQuery({
+    queryKey: ['/formList/list'],
+    queryFn: async () => {
+      const response = await fetchFormList();
+      return response
+    },
+  });
+  const data_list =  data? data.data: list_data;
   return (
     <ListProvider>
       <Header fixed>
@@ -41,7 +41,7 @@ export default function List() {
           </div>
           <ListPrimaryButtons />
         </div>
-        <ListTable data={list_data} />
+        <ListTable data={data_list} />
       </Main>
       <ListDialogs/>
     </ListProvider>

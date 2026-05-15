@@ -9,6 +9,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { type _List } from '../data/schema'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
+import { deleteFormList } from "@/api/serverApi"
 
 
 type ListDeleteDialogProps = {
@@ -25,22 +26,30 @@ export function ListDeleteDialog({
   const queryClient = useQueryClient()
 
   async function handleDelete(){
+      const res = await deleteFormList(currentRow.list_id)
+      toast.promise(sleep(0.01), {
+        loading: 'delete form list...',
+        success: () => {
+          return  `delete form list ${currentRow.list_name} success`
+        },
+        error: 'Error',
+      })
       onOpenChange(false)
-      
+      return await res
     }
   
-//   const mutation = useMutation({
-//     mutationFn: handleDelete,
-//     onSuccess: async () => {
-//       await queryClient.invalidateQueries({ queryKey: ['/counter'] })
-//     },
-//   })
+  const mutation = useMutation({
+    mutationFn: handleDelete,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/formList/list'] })
+    },
+  })
   
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      handleConfirm={handleDelete}
+      handleConfirm={mutation.mutate}
       title={
         <span className='text-destructive'>
           <AlertTriangle

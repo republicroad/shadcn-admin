@@ -1,7 +1,11 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
+import { Upload, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -17,21 +21,39 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { _List } from '../data/schema'
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from '@/components/ui/file-upload'
+import { uploadFormList } from '@/api/serverApi'
+import type { _List } from '../data/schema'
 
 const formSchema = z.object({
   list_name: z.string(),
   list_id: z.string(),
+  user_id: z.string(),
   file: z
     .instanceof(FileList)
     .refine((files) => files.length > 0, {
       message: 'Please upload a file.',
     })
     .refine(
-      (files) => ['text/csv', 'application/vnd.ms-excel'].includes(files?.[0]?.type),
+      (files) =>
+        [
+          'text/csv',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ].includes(files?.[0]?.type),
       'Please upload csv/xlsx format.'
     ),
 })
@@ -47,29 +69,65 @@ export function ListImportDialog({
   onOpenChange,
   currentRow
 }: ListImportDialogProps) {
+  const [files, setFiles] = useState<File[]>([])
+  const queryClient = useQueryClient()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { 
-      list_name: currentRow? currentRow.list_name: '',
-      list_id: currentRow? currentRow.list_id: '',
-      file: undefined 
+    defaultValues: {
+      list_name: currentRow ? currentRow.list_name : '',
+      list_id: currentRow ? currentRow.list_id : '',
+      user_id: currentRow ? currentRow.user_id : '',
+      file: undefined,
     },
   })
 
-  const fileRef = form.register('file')
+  useEffect(() => {
+    const dataTransfer = new DataTransfer()
+    files.forEach((file) => dataTransfer.items.add(file))
+    form.setValue('file', dataTransfer.files, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+  }, [files, form])
 
-  const onSubmit = () => {
-    const file = form.getValues('file')
+  const importMutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) =>{
+      const filedata: any = new FormData();
+      files.forEach((file) => {
+        filedata.append('file', file as Blob);
+      });
 
-    if (file && file[0]) {
-      const fileDetails = {
-        name: file[0].name,
-        size: file[0].size,
-        type: file[0].type,
-      }
-      showSubmittedData(fileDetails, 'You have imported the following file:')
+     const res =  await uploadFormList(values.list_id, values.list_name, values.user_id, filedata)
+     return await res
     }
-    onOpenChange(false)
+  })
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    importMutation.mutate(values,
+      {
+      onSuccess: () => {
+        toast.promise(sleep(0.01), {
+          loading: 'import form list...',
+          success: () => `import form list ${values.list_name} success`,
+          error: 'Error',
+        })
+        queryClient.invalidateQueries({ queryKey: ['/formList/list'] })
+        setFiles([])
+        form.reset({
+          list_name: currentRow ? currentRow.list_name : '',
+          list_id: currentRow ? currentRow.list_id : '',
+          user_id: currentRow ? currentRow.user_id : '',
+          file: undefined,
+        })
+        onOpenChange(false)
+      },
+      onError: (error) => {
+        const message =
+          error instanceof Error ? error.message : 'import form list failed'
+        toast.error(message)
+      },
+    })
   }
 
   return (
@@ -78,13 +136,14 @@ export function ListImportDialog({
       onOpenChange={(val) => {
         onOpenChange(val)
         form.reset()
+        setFiles([])
       }}
     >
       <DialogContent className='gap-2 sm:max-w-sm'>
         <DialogHeader className='text-start'>
           <DialogTitle> 文件导入</DialogTitle>
           <DialogDescription>
-            Import list quickly from a csv/xlxs file.
+            Import list quickly from a csv/xlsx file.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -128,13 +187,41 @@ export function ListImportDialog({
                 <FormItem className='my-2'>
                   <FormLabel>File</FormLabel>
                   <FormControl>
-                    <Input
-                      type='file'
+                    <FileUpload
+                      value={files}
+                      onValueChange={setFiles}
+                      maxFiles={1}
                       accept='text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                      {...fileRef}
-                      className='h-8 py-0'
-                    />
+                    >
+                      <FileUploadDropzone className='py-4'>
+                        <div className='flex items-center gap-2'>
+                          <Upload className='size-4 text-muted-foreground' />
+                          <span className='text-sm text-muted-foreground'>
+                            Drop files or
+                          </span>
+                          <FileUploadTrigger asChild>
+                            <Button variant='link' size='sm' className='h-auto p-0'>
+                              browse
+                            </Button>
+                          </FileUploadTrigger>
+                        </div>
+                      </FileUploadDropzone>
+                      <FileUploadList>
+                        {files.map((file, index) => (
+                          <FileUploadItem key={index} value={file} className='p-2'>
+                            <FileUploadItemPreview className='size-8' />
+                            <FileUploadItemMetadata size='sm' />
+                            <FileUploadItemDelete asChild>
+                              <Button variant='ghost' size='icon' className='size-6'>
+                                <X className='size-3' />
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    </FileUpload>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -144,7 +231,11 @@ export function ListImportDialog({
           <DialogClose asChild>
             <Button variant='outline'>Close</Button>
           </DialogClose>
-          <Button type='submit' form='list-import-form'>
+          <Button
+            type='submit'
+            form='list-import-form'
+            disabled={importMutation.isPending}
+          >
             Import
           </Button>
         </DialogFooter>
