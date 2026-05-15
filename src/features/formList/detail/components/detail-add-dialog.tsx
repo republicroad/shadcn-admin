@@ -1,10 +1,10 @@
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,24 +23,41 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
-import { detailList } from '../data/schema'
-import { Tag } from 'lucide-react'
+import { createListData } from '@/api/serverApi'
 
 const formSchema = z
   .object({
-    list_id:  z.string().min(1, 'list_id is required.'),
-    list_name: z.string().min(1, 'list_name is required.'),
+    list_id: z.string().min(1, 'list_id is required.'),
+    list_name: z.string(),
+    user_id: z.string().min(1, 'user_id is required.'),
     value: z.string().min(1, 'value is required.'),
     tag: z.string(),
-    ttl: z.number()
- })
+    ttl: z.preprocess(
+      (value) => {
+        if (value === '' || value === null || typeof value === 'undefined') {
+          return undefined
+        }
+
+        return Number(value)
+      },
+      z.number().min(0, 'ttl must be greater than or equal to 0').optional()
+    ),
+  })
 type detailListForm = z.infer<typeof formSchema>
+
+type DetailListInitForm = {
+  list_id?: string
+  list_name?: string
+  user_id?: string
+  value?: string
+  tag?: string
+  ttl?: number | string
+}
 
 type DetailListCreateDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  initform: any
+  initform: DetailListInitForm
 }
 export function DetailListCreateDialog({
   open,
@@ -53,25 +70,89 @@ export function DetailListCreateDialog({
     defaultValues: {
       list_id: initform.list_id || '',
       list_name: initform.list_name || '',
+      user_id: initform.user_id || '',
       value: initform.value || '',
       tag: initform.tag || '',
-      ttl: initform.ttl || null,
+      ttl:
+        initform.ttl === '' || typeof initform.ttl === 'undefined'
+          ? undefined
+          : Number(initform.ttl),
     },
   })
 
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    form.reset({
+      list_id: initform.list_id || '',
+      list_name: initform.list_name || '',
+      user_id: initform.user_id || '',
+      value: initform.value || '',
+      tag: initform.tag || '',
+      ttl:
+        initform.ttl === '' || typeof initform.ttl === 'undefined'
+          ? undefined
+          : Number(initform.ttl),
+    })
+  }, [form, initform, open])
+
+  const addMutation = useMutation({
+    mutationFn: async (values: detailListForm) => {
+      return await createListData(
+        values.list_id,
+        values.list_name,
+        values.user_id,
+        values.value,
+        values.tag,
+        values.ttl
+      )
+    },
+    onSuccess: async (_, values) => {
+      toast.promise(sleep(0.01), {
+        loading: 'add new list data...',
+        success: () => `add new list data ${values.value} success`,
+        error: 'Error',
+      })
+      await queryClient.invalidateQueries({
+        queryKey: ['/formList/detail', values.list_id],
+      })
+      form.reset({
+        list_id: values.list_id,
+        list_name: values.list_name,
+        user_id: values.user_id,
+        value: '',
+        tag: '',
+        ttl: undefined,
+      })
+      onOpenChange(false)
+    },
+    onError: (error) => {
+      const message =
+        error instanceof Error ? error.message : 'add new list data failed'
+      toast.error(message)
+    },
+  })
 
   const onSubmit = (values: detailListForm) => {
-    form.reset()
-    showSubmittedData(values)
-    onOpenChange(false)
-    console.log('Submitted data:', values)
+    addMutation.mutate(values)
   }
 
   return (
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset()
+        if (!state) {
+          form.reset({
+            list_id: initform.list_id || '',
+            list_name: initform.list_name || '',
+            user_id: initform.user_id || '',
+            value: '',
+            tag: '',
+            ttl: undefined,
+          })
+        }
         onOpenChange(state)
       }}
     >
@@ -90,38 +171,48 @@ export function DetailListCreateDialog({
               className='space-y-4 px-0.5'
             >
               <FormField 
-              control={form.control}
-              name='list_id'
-              render={() => (
-                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1' hidden >
-                  <FormLabel className='col-span-2 text-end'>list_id</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled
-                      placeholder={initform.list_id}
-                      className='col-span-4'
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField 
-              control={form.control}
-              name='list_name'
-              render={() => (
-                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1' >
-                  <FormLabel className='col-span-2 text-end'>名单名称:</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled
-                      defaultValue={initform.list_name}
-                      className='col-span-4'
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
+                control={form.control}
+                name='list_id'
+                render={({ field }) => (
+                  <FormItem
+                    className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'
+                    hidden
+                  >
+                    <FormLabel className='col-span-2 text-end'>list_id</FormLabel>
+                    <FormControl>
+                      <Input disabled className='col-span-4' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='user_id'
+                render={({ field }) => (
+                  <FormItem
+                    className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'
+                    hidden
+                  >
+                    <FormLabel className='col-span-2 text-end'>user_id</FormLabel>
+                    <FormControl>
+                      <Input disabled className='col-span-4' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='list_name'
+                render={({ field }) => (
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>名单名称:</FormLabel>
+                    <FormControl>
+                      <Input disabled className='col-span-4' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
                 control={form.control}
                 name='value'
                 render={({ field }) => (
@@ -169,9 +260,11 @@ export function DetailListCreateDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        type='number'
                         placeholder='请输入过期时间'
                         className='col-span-4'
                         {...field}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
@@ -181,7 +274,11 @@ export function DetailListCreateDialog({
             </form>
           </Form>
         <DialogFooter>
-          <Button type='submit' form='detail-add-form'>
+          <Button
+            type='submit'
+            form='detail-add-form'
+            disabled={addMutation.isPending}
+          >
             Save
           </Button>
         </DialogFooter>

@@ -1,27 +1,46 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '@/shared/apiClient'
+import { useLocation } from '@tanstack/react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useFormListStore } from '@/stores/form-list-store'
 import { DetailListPrimaryButtons } from './components/detail-primary-buttons'
 import { DetailListProvider } from './components/detail-provider'
 import { DetailListTable } from './components/detail-table'
 import { DetailListDialogs } from './components/detail-dialog'
 import { detail_data }  from './data/data'
+import type { _List } from '../list/data/schema'
+import { fetchListData, fetchFormListDetail } from '@/api/serverApi'
 
 export default function DetailList() {
-//   const { data } = useQuery({
-//     queryKey: ['/api/tasks'],
-//     queryFn: async () => {
-//       const response = await api.post('/api/tasks')
-//       const res = response.data
-//       return res
-//     },
-//   })
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const listOptions = useFormListStore((state) => state.listOptions)
+  const list_id = queryParams.get('list_id') || listOptions[0]?.list_id || ''
 
+  const { data: meta } = useQuery({
+    queryKey: ['/formList/detail/meta', list_id],
+    enabled: Boolean(list_id),
+    queryFn: async () => {
+      const response = await fetchFormListDetail(list_id)
+      return response
+    },
+  })
+
+  const { data } = useQuery({
+    queryKey: ['/formList/detail', list_id],
+    enabled: Boolean(list_id),
+    queryFn: async () => {
+      const response = await fetchListData(list_id)
+      return response
+    },
+  })
+
+  const list_meta: _List | null = meta?.data ?? null
+  const dataList = data ? data.data : detail_data
   return (
     <DetailListProvider>
       <Header fixed>
@@ -41,9 +60,9 @@ export default function DetailList() {
           </div>
           <DetailListPrimaryButtons />
         </div>
-        <DetailListTable data={detail_data} />
+        <DetailListTable data={dataList} />
       </Main>
-      <DetailListDialogs listData={detail_data[0]} />
+      <DetailListDialogs listData={list_meta} />
     </DetailListProvider>
   )
 }

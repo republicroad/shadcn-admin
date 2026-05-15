@@ -1,7 +1,5 @@
 
 import api from '@/shared/apiClient'
-import { file } from 'bun';
-
 
 export async function fetchCounterList() {
   const response = await api.get('/api/counter');
@@ -19,7 +17,7 @@ export async function createCounter(
 }
 
 export async function deleteCounter(
-  id: any,
+  id: string | number,
   user_id: string,
 ) {
   const response = await api.delete(`/api/counter?id=${id}&user_id=${user_id}`)
@@ -51,7 +49,7 @@ export async function uploadFormList(
     list_id: string,
     list_name: string,
     user_id: string,
-    data: any
+    data: FormData
 ) {
   const response = await api.post(
     `/api/formlist/upload_list?user_id=${user_id}&list_id=${list_id}&list_name=${list_name}`,
@@ -74,5 +72,38 @@ export async function exportFormList(
       responseType: 'blob',
     }
   )
+  return await response.data
+}
+
+export async function fetchFormListDetail(
+    list_id: string,
+) {
+  const response = await api.get(`api/formlist/detail?list_id=${list_id}`)
+  return await response.data
+}
+
+export async function fetchListData(
+    list_id: string,
+) {
+  const response = await api.get(`api/formlist/listdata?list_id=${list_id}`)
+  return await response.data
+}
+
+export async function createListData(
+  list_id: string,
+  list_name: string,
+  user_id: string,
+  value: string,
+  tag: string,
+  ttl?: number
+) {
+  const response = await api.post('/api/formlist/listdata', { list_id, list_name, user_id, value, tag, ttl })
+  return await response.data
+}
+
+export async function deleteListData(
+  data_id: number | string,
+) {
+  const response = await api.delete(`/api/formlist/listdata?data_id=${data_id}`)
   return await response.data
 }
