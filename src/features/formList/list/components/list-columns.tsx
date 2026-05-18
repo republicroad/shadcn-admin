@@ -1,9 +1,9 @@
-import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from '@tanstack/react-router'
+import { type ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type _List } from '../data/schema'
-import { DataTableRowActions  } from './data-table-row-actions'
+import { DataTableRowActions } from './data-table-row-actions'
 
 export const listColumns: ColumnDef<_List>[] = [
   
@@ -13,9 +13,14 @@ export const listColumns: ColumnDef<_List>[] = [
       <DataTableColumnHeader column={column} title='名单名称' />
     ),
     cell: ({ row }) => (
-      <Link to={`/formList/detail?list_id=${row.getValue('list_id')}`}><LongText className='max-w-36 ps-3'>{row.getValue('list_name')}</LongText></Link>
+      <Link
+        to={`/formList/detail?list_id=${row.getValue('list_id')}`}
+        className='inline-block text-primary/80 underline decoration-primary/50 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary'
+      >
+        <LongText className='max-w-36 ps-3'>{row.getValue('list_name')}</LongText>
+      </Link>
     ),
-    enableSorting: false
+    enableSorting: false,
   },
   {
     accessorKey: 'list_id',
@@ -27,7 +32,7 @@ export const listColumns: ColumnDef<_List>[] = [
         <button onClick={() => navigator.clipboard.writeText(row.getValue('list_id'))}>{row.getValue('list_id')}</button>
       </div>
     ),
-    enableSorting: false
+    enableSorting: false,
   },
   {
     accessorKey: 'user_name',
@@ -35,9 +40,11 @@ export const listColumns: ColumnDef<_List>[] = [
       <DataTableColumnHeader column={column} title='所属用户' />
     ),
     cell: ({ row }) => (
-      <LongText className='w-fit ps-2 text-nowrap'>{row.getValue('user_name')}</LongText>
+      <LongText className='w-fit ps-2 text-nowrap'>
+        {row.getValue('user_name')}
+      </LongText>
     ),
-    enableSorting: false
+    enableSorting: false,
   },
   {
     accessorKey: 'create_time',
@@ -45,9 +52,11 @@ export const listColumns: ColumnDef<_List>[] = [
       <DataTableColumnHeader column={column} title='创建时间' />
     ),
     cell: ({ row }) => (
-      <div className='w-fit ps-2 text-nowrap'>{row.getValue('create_time')}</div>
+      <div className='w-fit ps-2 text-nowrap'>
+        {row.getValue('create_time')}
+      </div>
     ),
-    enableSorting: false
+    enableSorting: false,
   },
   {
     id: 'actions',
