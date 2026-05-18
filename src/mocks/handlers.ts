@@ -22,10 +22,10 @@ export const handlers = [
   //   })
   // }),
 
-  http.all('/api/users', async ({ request }) => {
-    // const requestBody = await request.json();
-    return HttpResponse.json({ status: 0, data: users })
-  }),
+  // http.all('/api/users', async ({ request }) => {
+  //   // const requestBody = await request.json();
+  //   return HttpResponse.json({ status: 0, data: users })
+  // }),
   http.all('/api/tasks', async ({ request }) => {
     // const requestBody = await request.json();
     return HttpResponse.json(tasks)
