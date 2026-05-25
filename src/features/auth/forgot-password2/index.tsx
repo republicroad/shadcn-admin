@@ -47,6 +47,7 @@ import {
 import { PasswordInput } from '@/components/ui/password-input'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
+import { authService } from '@/features/auth/services/auth'
 import { AuthLayout } from '../auth-layout'
 
 const formSchema = z
@@ -120,15 +121,12 @@ export const ForgotPasswordOTP = () => {
     // 后面的数据会覆盖前面的数据, 这样就可以保证最终的 formdata 中包含了所有步骤的数据了.
     try {
       const data = { ...formdata, ...form.getValues() }
-      const resp = await authApi.post(
-        '/api/auth/forgot-password/reset-password-with-otp',
-        data
-      )
-      if (resp.data.status == 0) {
-        toast.success(resp.data.message || `Reset password for ${data.email}`)
+      const result = await authService.forgotResetPasswdWithOTPv2(data)
+      if (result.status == 0) {
+        toast.success(result.message || `Reset password for ${data.email}`)
         navigate({ to: '/sign-in' })
       } else {
-        toast.error(resp.data.message || 'Failed to reset password.')
+        toast.error(result.message || 'Failed to reset password.')
       }
     } catch (err) {
       // Access custom error message from server response
@@ -148,15 +146,12 @@ export const ForgotPasswordOTP = () => {
       const data = Object.fromEntries(_data)
       console.log('Requesting OTP for data:', data)
       try {
-        const result = await authApi.post(
-          '/api/auth/forgot-password/email-otp',
-          data
-        )
+        const result = await authService.forgotPasswdEmailv2(data)
         console.log('OTP request successful, server response:', result)
-        if (result.data.status == 0) {
-          toast.success(result.data.message || 'OTP sent successfully!')
+        if (result.status == 0) {
+          toast.success(result.message || 'OTP sent successfully!')
         } else {
-          toast.error(result.data.message || 'Failed to send OTP.')
+          toast.error(result.message || 'Failed to send OTP.')
           return
           // throw new Error(result.data.message || 'Failed to send OTP.')
         }
