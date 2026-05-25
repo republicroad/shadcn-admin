@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { verifyJwt } from '@/lib/jwt'
+import { decodeJwt } from '@/lib/jwt'
 
 export interface User {
   id?: string
@@ -54,8 +54,8 @@ export const useAuthStore = create<AuthState>()(
           return result
         }, // 以后可以根据 user 和 accessToken 来判断是否 authenticated.
         login: async (accessToken: string) => {
-          // const { payload: user } = await verifyJwt(accessToken)
-          const payload = await verifyJwt(accessToken)
+          // const { payload: user } = await decode_Jwt(accessToken)
+          const payload = decodeJwt(accessToken)
           const user: User = payload as unknown as User
           const expiresAt = user.exp
           set({ user, accessToken, expiresAt })

@@ -38,7 +38,7 @@ export function ForgotPasswordForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    toast.promise(api.post('/api/email_otp', data), {
+    toast.promise(api.post('/api/auth/email_otp', data), {
       loading: 'Sending email...',
       success: () => {
         // Store email for later use in OTP verification

@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { authService } from '@/features/auth/services/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -32,15 +33,6 @@ const formSchema = z.object({
     .min(1, 'Please enter your password.')
     .min(7, 'Password must be at least 7 characters long.'),
 })
-
-// const loginUser = async (credentials: any) => {
-//   const response = await authApi.post('/api/auth/login', {
-//     ...credentials,
-//     username: credentials.email,
-//   }) // Replace with your API endpoint
-//   console.log('loginUser response:', response)
-//   return response
-// }
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
@@ -65,17 +57,9 @@ export function UserAuthForm({
 
   const { mutateAsync } = useMutation({
     // isError, isSuccess, data, error
-    // mutationFn: loginUser,
-    //  (credentials as { email: string }).email
-    mutationFn: async (credentials: Record<string, any>) =>
-      authApi.post('/api/auth/login', {
-        ...credentials,
-        username: credentials.email,
-      }),
-    onSuccess: async (response) => {
-      console.log('mutationFn onSuccess:', response)
-      // data 以后可以考虑用 typescript 类型来定义.
-      await login(response.data.data.accessToken) // 直接调用 login 方法来设置 user 和 accessToken, 以及 expiresAt.
+    mutationFn: authService.login,
+    onSuccess: async (d) => {
+      await login(d.data.accessToken) // 直接调用 login 方法来设置 user 和 accessToken, 以及 expiresAt.
       // toast.success(data.message)
       // 这里抛出一个错误来触发 toast 的 error 状态, 因为 login 成功后我们还需要做一些其他的操作, 比如跳转和显示 toast.
       // throw new Error(data.message + '\n 强抛错误, 应该会在 toast 中显示')
@@ -134,7 +118,7 @@ export function UserAuthForm({
               </FormControl>
               <FormMessage />
               <Link
-                to='/forgot-password'
+                to='/forgot-password2'
                 className='absolute inset-e-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
               >
                 Forgot password?

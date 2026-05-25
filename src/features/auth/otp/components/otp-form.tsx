@@ -46,33 +46,40 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    try {
-      // get email from localStorage or context, since it's needed for OTP verification
-      // const email = localStorage.getItem('email'); // or useContext(AuthContext).email
-      // if (!email) throw new Error('Email not found. Please start the forgot password process again.');
-      const email = localStorage.getItem('forgotPassword.email')
-      const data_with_email = { email: email, ...data }
-      console.log('OtpForm submitted data:', data_with_email)
-      const response = await api.post('/api/verify_otp', data_with_email)
-      console.log('Success:', response)
-      // if (response.status==200) throw new Error('Submission failed');
-      const token = response.data.token // Assuming the token is in the response data
-      localStorage.setItem('forgotPassword.token', token)
-      localStorage.removeItem('forgotPassword.email')
-      toast.success(response.data.message)
-      // toast.success("otp verified successfully!");
-    } catch (error: any) {
-      console.log('error:', error)
-      toast.error(error.message || 'Something went wrong')
-    }
+    // 可以把 forgot-password 的 email 和 token 存在 localStorage 中, 这样在 OTP 验证成功后就可以
+    // 直接从 localStorage 中获取 email 和 token 来进行下一步的操作, 而不需要在 navigate 的时候传递这些信息了.
+    const email = localStorage.getItem('forgotPassword.email')
+    const data_with_email = { email: email, ...data }
+    console.log('OtpForm submitted data:', data_with_email)
+    toast.promise(api.post('/api/auth/verify_otp', data_with_email), {
+      loading: 'Verifying OTP...',
+      success: (response) => {
+        console.log('OTP verification successful, server response:', response)
+        if (response.data.status == 0) {
+          const token = response.data.token // Assuming the token is in the response data
+          console.log('OTP verification successful, received token:', token)
+          localStorage.setItem('forgotPassword.token', token)
+          localStorage.removeItem('forgotPassword.email')
+          setIsLoading(false)
+          navigate({ to: '/reset-password' })
+        } else {
+          setIsLoading(false)
+        }
+        return response.data.message || 'OTP verified successfully!'
+      },
+      error: (err) => {
+        console.log('OTP verification failed:', err)
+        setIsLoading(false)
+        // Access custom error message from server response
+        return err.response?.data?.message || err
+        // throw new Error(err.response?.data?.message || err) // 这里抛出一个错误来触发 toast 的 error 状态, 因为 OTP 验证失败后我们还需要做一些其他的操作, 比如保持在当前页面和显示 toast.
+      },
+    })
     // showSubmittedData(data)
-
-    setTimeout(() => {
-      setIsLoading(false)
-      // todo: navigate multiple routes based on user role or
-      // other conditions after successful OTP verification
-      navigate({ to: '/reset-password' })
-    }, 1000)
+    // setTimeout(() => {
+    //   setIsLoading(false)
+    //   navigate({ to: '/reset-password' })
+    // }, 1000)
   }
 
   return (

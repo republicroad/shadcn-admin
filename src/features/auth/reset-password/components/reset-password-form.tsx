@@ -57,7 +57,7 @@ export function ResetPasswordForm({
     const token = localStorage.getItem('forgotPassword.token')
     const data_with_token = { token, ...data }
     console.log('OtpForm submitted data:', data_with_token)
-    toast.promise(api.post('/api/reset-password', data_with_token), {
+    toast.promise(api.post('/api/auth/reset-password', data_with_token), {
       loading: 'Reset password ...',
       success: () => {
         setIsLoading(false)

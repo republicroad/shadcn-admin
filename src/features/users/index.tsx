@@ -23,7 +23,7 @@ export function Users() {
     // data, isLoading, isError, error
     queryKey: ['/api/users'],
     queryFn: async () => {
-      const response = await api.post('/api/users')
+      const response = await api.get('/api/users')
       const res = response.data
       return res
     },

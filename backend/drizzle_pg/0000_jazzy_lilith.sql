@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 CREATE TABLE "brde_list" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -154,4 +154,3 @@ CREATE TABLE "shared_counter" (
 );
 --> statement-breakpoint
 CREATE INDEX "idx_brde_rule_proj_id_rule_status" ON "brde_rule" USING btree ("proj_id" text_ops,"rule_status" text_ops);
-*/

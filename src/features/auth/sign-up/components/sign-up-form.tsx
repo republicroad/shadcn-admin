@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { authService } from '@/features/auth/services/auth'
 
 const formSchema = z
   .object({
@@ -38,14 +39,6 @@ const formSchema = z
     path: ['confirmPassword'],
   })
 
-const registerUser = async (credentials: any) => {
-  const response = await api.post('/api/auth/register', {
-    ...credentials,
-    username: credentials.email,
-  }) // Replace with your API endpoint
-  return response
-}
-
 export function SignUpForm({
   className,
   ...props
@@ -62,13 +55,13 @@ export function SignUpForm({
     },
   })
   const { mutateAsync, isError, isSuccess, data, error } = useMutation({
-    mutationFn: registerUser,
-    onSuccess: (response) => {
+    mutationFn: authService.register,
+    onSuccess: (d) => {
       // data 以后可以考虑用 typescript 类型来定义.
-      console.log('onSuccess:', response)
+      console.log('onSuccess:', d)
       navigate({ to: '/sign-in' })
       // navigate({ to: '/sign-in' })
-      // if (response.data.status == 0) {
+      // if (d.status == 0) {
       //   alert(data.message)
       //   navigate({ to: '/sign-in' })
       // } else {
@@ -76,7 +69,7 @@ export function SignUpForm({
       // }
     },
     onError: (error) => {
-      alert(`Login failed: ${error.message}`)
+      alert(`Sign up failed: ${error.message}`)
     },
   })
   function onSubmit(data: z.infer<typeof formSchema>) {
