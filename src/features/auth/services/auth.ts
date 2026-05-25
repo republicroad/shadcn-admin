@@ -1,5 +1,5 @@
 import authApi from '@/shared/authapiClient'
-import { type credentials } from '../types/auth.types'
+import { type User } from '../types/auth.types'
 
 export const authEndpoint = {
   register: '/api/auth/register',
@@ -17,25 +17,29 @@ export const authEndpoint = {
 
 // UI 组件中应该只有数据, 不应该包含 http response 相关的结构.
 export const authService = {
-  register: async (credentials: unknown) => {
+  register: async (credentials: User) => {
     return (await authApi.post(authEndpoint.register, credentials)).data
   },
-  login: async (credentials: unknown) => {
+  login: async (credentials: User) => {
     // {...credentials, username: credentials.email}
     return (await authApi.post(authEndpoint.login, credentials)).data
   },
-  resetPassword: async (credentials: credentials) => {
+  resetPassword: async (credentials: User) => {
     return (await authApi.post(authEndpoint.resetPassword, credentials)).data
   },
   // getProfile: () => authApi.get(getProfileUrl),
   // logout: () => authApi.post(logoutUrl),
-  forgotResetPasswdWithOTPv2: async (credentials: credentials) => {
+  forgotResetPasswdWithOTPv2: async (userOtpPasswd: {
+    email: string
+    otp: string
+    password: string
+  }) => {
     return (
-      await authApi.post(authEndpoint.forgotResetPasswdWithOTPv2, credentials)
+      await authApi.post(authEndpoint.forgotResetPasswdWithOTPv2, userOtpPasswd)
     ).data
   },
-  forgotPasswdEmailv2: async (credentials: credentials) => {
-    return (await authApi.post(authEndpoint.forgotPasswdEmailv2, credentials))
+  forgotPasswdEmailv2: async (userEmail: { email: string }) => {
+    return (await authApi.post(authEndpoint.forgotPasswdEmailv2, userEmail))
       .data
   },
 }

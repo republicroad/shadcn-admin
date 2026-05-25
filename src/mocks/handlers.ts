@@ -5,6 +5,7 @@ import { conversations } from '@/features/chats/data/convo.json'
 import { tasks } from '@/features/tasks/data/tasks'
 import { users } from '@/features/users/data/users'
 
+import { counters } from '../features/share_counter/data/counter'
 // import data1 from '../features/chats/data/convo.json' with { type: 'json' }
 
 export const handlers = [

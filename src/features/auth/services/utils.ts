@@ -1,15 +1,10 @@
 import { signJwt } from '@/lib/jwt'
+import { type User } from '../types/auth.types'
 
-export interface LoginUser {
-  email: string
-  password: string
-  username: string
-}
-
-export async function fake_user_login(requestBody: LoginUser) {
-  const loginuser: LoginUser = requestBody
+export async function fake_user_login(requestBody: User) {
+  const loginuser: User = requestBody
   const user = {
-    username: loginuser.username,
+    username: loginuser.email,
     email: loginuser.email,
     user_id: '2344f9862db5422b8a155897626f72c4',
     exp: Date.now() / 1000,
