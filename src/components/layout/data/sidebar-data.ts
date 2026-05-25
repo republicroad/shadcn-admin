@@ -89,7 +89,7 @@ export const sidebarData: SidebarData = {
 
         {
           title: '共享计数器',
-          url: '/shareCounters',
+          url: '/counter',
           // icon: ListTodo,
         },
         {
