@@ -80,6 +80,9 @@ export function EmailNotificationsPanel() {
   const currentPage = pagination?.current ?? page
   const scopedUserId = filters.user_id.trim()
   const currentEmailRow = isEmailRow(currentRow) ? currentRow : null
+  const isAddOpen = open?.channel === 'email' && open.type === 'add'
+  const isEditOpen = open?.channel === 'email' && open.type === 'edit'
+  const isDeleteOpen = open?.channel === 'email' && open.type === 'delete'
 
   const closeDialogs = () => {
     setOpen(null)
@@ -205,7 +208,7 @@ export function EmailNotificationsPanel() {
               <Button
                 onClick={() => {
                   setCurrentRow(null)
-                  setOpen('add')
+                  setOpen({ channel: 'email', type: 'add' })
                 }}
               >
                 <Plus className='size-4' />
@@ -304,7 +307,7 @@ export function EmailNotificationsPanel() {
                                   variant='outline'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('edit')
+                                    setOpen({ channel: 'email', type: 'edit' })
                                   }}
                                 >
                                   <Pencil className='size-4' />
@@ -315,7 +318,10 @@ export function EmailNotificationsPanel() {
                                   variant='destructive'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('delete')
+                                    setOpen({
+                                      channel: 'email',
+                                      type: 'delete',
+                                    })
                                   }}
                                 >
                                   <Trash2 className='size-4' />
@@ -412,24 +418,24 @@ export function EmailNotificationsPanel() {
       </Card>
 
       <EmailConfigDialog
-        open={open === 'add' || open === 'edit'}
+        open={isAddOpen || isEditOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'edit' ? currentEmailRow : null}
-        targetUserId={open === 'add' ? scopedUserId : currentEmailRow?.user_id}
+        currentRow={isEditOpen ? currentEmailRow : null}
+        targetUserId={isAddOpen ? scopedUserId : currentEmailRow?.user_id}
       />
 
       <EmailDeleteDialog
-        open={open === 'delete'}
+        open={isDeleteOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'delete' ? currentEmailRow : null}
+        currentRow={isDeleteOpen ? currentEmailRow : null}
       />
     </div>
   )

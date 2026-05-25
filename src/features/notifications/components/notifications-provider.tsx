@@ -1,12 +1,18 @@
 import React, { useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
+import { type NotificationChannel } from '../data/channels'
 import { type NotificationRow } from '../data/row-guards'
 
 export type NotificationsDialogType = 'add' | 'edit' | 'delete'
+export type NotificationsDialogState = {
+  channel: NotificationChannel
+  type: NotificationsDialogType
+}
 
 type NotificationsContextType = {
-  open: NotificationsDialogType | null
-  setOpen: (str: NotificationsDialogType | null) => void
+  open: NotificationsDialogState | null
+  setOpen: React.Dispatch<
+    React.SetStateAction<NotificationsDialogState | null>
+  >
   currentRow: NotificationRow | null
   setCurrentRow: React.Dispatch<React.SetStateAction<NotificationRow | null>>
 }
@@ -19,7 +25,7 @@ export function NotificationsProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [open, setOpen] = useDialogState<NotificationsDialogType>(null)
+  const [open, setOpen] = useState<NotificationsDialogState | null>(null)
   const [currentRow, setCurrentRow] = useState<NotificationRow | null>(null)
 
   return (

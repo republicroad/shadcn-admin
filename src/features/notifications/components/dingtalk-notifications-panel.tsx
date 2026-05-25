@@ -160,6 +160,9 @@ export function DingtalkNotificationsPanel() {
   const currentPage = pagination?.current ?? page
   const scopedUserId = filters.user_id.trim()
   const currentDingtalkRow = isDingtalkRow(currentRow) ? currentRow : null
+  const isAddOpen = open?.channel === 'dingtalk' && open.type === 'add'
+  const isEditOpen = open?.channel === 'dingtalk' && open.type === 'edit'
+  const isDeleteOpen = open?.channel === 'dingtalk' && open.type === 'delete'
 
   const closeDialogs = () => {
     setOpen(null)
@@ -306,7 +309,7 @@ export function DingtalkNotificationsPanel() {
               <Button
                 onClick={() => {
                   setCurrentRow(null)
-                  setOpen('add')
+                  setOpen({ channel: 'dingtalk', type: 'add' })
                 }}
               >
                 <Plus className='size-4' />
@@ -420,7 +423,10 @@ export function DingtalkNotificationsPanel() {
                                   variant='outline'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('edit')
+                                    setOpen({
+                                      channel: 'dingtalk',
+                                      type: 'edit',
+                                    })
                                   }}
                                 >
                                   <Pencil className='size-4' />
@@ -431,7 +437,10 @@ export function DingtalkNotificationsPanel() {
                                   variant='destructive'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('delete')
+                                    setOpen({
+                                      channel: 'dingtalk',
+                                      type: 'delete',
+                                    })
                                   }}
                                 >
                                   <Trash2 className='size-4' />
@@ -522,26 +531,24 @@ export function DingtalkNotificationsPanel() {
       </Card>
 
       <DingtalkConfigDialog
-        open={open === 'add' || open === 'edit'}
+        open={isAddOpen || isEditOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'edit' ? currentDingtalkRow : null}
-        targetUserId={
-          open === 'add' ? scopedUserId : currentDingtalkRow?.user_id
-        }
+        currentRow={isEditOpen ? currentDingtalkRow : null}
+        targetUserId={isAddOpen ? scopedUserId : currentDingtalkRow?.user_id}
       />
 
       <DingtalkDeleteDialog
-        open={open === 'delete'}
+        open={isDeleteOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'delete' ? currentDingtalkRow : null}
+        currentRow={isDeleteOpen ? currentDingtalkRow : null}
       />
     </div>
   )

@@ -160,6 +160,9 @@ export function FeishuNotificationsPanel() {
   const currentPage = pagination?.current ?? page
   const scopedUserId = filters.user_id.trim()
   const currentFeishuRow = isFeishuRow(currentRow) ? currentRow : null
+  const isAddOpen = open?.channel === 'feishu' && open.type === 'add'
+  const isEditOpen = open?.channel === 'feishu' && open.type === 'edit'
+  const isDeleteOpen = open?.channel === 'feishu' && open.type === 'delete'
 
   const closeDialogs = () => {
     setOpen(null)
@@ -306,7 +309,7 @@ export function FeishuNotificationsPanel() {
               <Button
                 onClick={() => {
                   setCurrentRow(null)
-                  setOpen('add')
+                  setOpen({ channel: 'feishu', type: 'add' })
                 }}
               >
                 <Plus className='size-4' />
@@ -420,7 +423,10 @@ export function FeishuNotificationsPanel() {
                                   variant='outline'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('edit')
+                                    setOpen({
+                                      channel: 'feishu',
+                                      type: 'edit',
+                                    })
                                   }}
                                 >
                                   <Pencil className='size-4' />
@@ -431,7 +437,10 @@ export function FeishuNotificationsPanel() {
                                   variant='destructive'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('delete')
+                                    setOpen({
+                                      channel: 'feishu',
+                                      type: 'delete',
+                                    })
                                   }}
                                 >
                                   <Trash2 className='size-4' />
@@ -522,24 +531,24 @@ export function FeishuNotificationsPanel() {
       </Card>
 
       <FeishuConfigDialog
-        open={open === 'add' || open === 'edit'}
+        open={isAddOpen || isEditOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'edit' ? currentFeishuRow : null}
-        targetUserId={open === 'add' ? scopedUserId : currentFeishuRow?.user_id}
+        currentRow={isEditOpen ? currentFeishuRow : null}
+        targetUserId={isAddOpen ? scopedUserId : currentFeishuRow?.user_id}
       />
 
       <FeishuDeleteDialog
-        open={open === 'delete'}
+        open={isDeleteOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'delete' ? currentFeishuRow : null}
+        currentRow={isDeleteOpen ? currentFeishuRow : null}
       />
     </div>
   )

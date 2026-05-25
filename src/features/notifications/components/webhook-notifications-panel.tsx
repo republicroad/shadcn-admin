@@ -162,6 +162,9 @@ export function WebhookNotificationsPanel() {
   const currentPage = pagination?.current ?? page
   const scopedUserId = filters.user_id.trim()
   const currentWebhookRow = isWebhookRow(currentRow) ? currentRow : null
+  const isAddOpen = open?.channel === 'webhook' && open.type === 'add'
+  const isEditOpen = open?.channel === 'webhook' && open.type === 'edit'
+  const isDeleteOpen = open?.channel === 'webhook' && open.type === 'delete'
 
   const closeDialogs = () => {
     setOpen(null)
@@ -308,7 +311,7 @@ export function WebhookNotificationsPanel() {
               <Button
                 onClick={() => {
                   setCurrentRow(null)
-                  setOpen('add')
+                  setOpen({ channel: 'webhook', type: 'add' })
                 }}
               >
                 <Plus className='size-4' />
@@ -447,7 +450,10 @@ export function WebhookNotificationsPanel() {
                                   variant='outline'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('edit')
+                                    setOpen({
+                                      channel: 'webhook',
+                                      type: 'edit',
+                                    })
                                   }}
                                 >
                                   <Pencil className='size-4' />
@@ -458,7 +464,10 @@ export function WebhookNotificationsPanel() {
                                   variant='destructive'
                                   onClick={() => {
                                     setCurrentRow(item)
-                                    setOpen('delete')
+                                    setOpen({
+                                      channel: 'webhook',
+                                      type: 'delete',
+                                    })
                                   }}
                                 >
                                   <Trash2 className='size-4' />
@@ -549,26 +558,24 @@ export function WebhookNotificationsPanel() {
       </Card>
 
       <WebhookConfigDialog
-        open={open === 'add' || open === 'edit'}
+        open={isAddOpen || isEditOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'edit' ? currentWebhookRow : null}
-        targetUserId={
-          open === 'add' ? scopedUserId : currentWebhookRow?.user_id
-        }
+        currentRow={isEditOpen ? currentWebhookRow : null}
+        targetUserId={isAddOpen ? scopedUserId : currentWebhookRow?.user_id}
       />
 
       <WebhookDeleteDialog
-        open={open === 'delete'}
+        open={isDeleteOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             closeDialogs()
           }
         }}
-        currentRow={open === 'delete' ? currentWebhookRow : null}
+        currentRow={isDeleteOpen ? currentWebhookRow : null}
       />
     </div>
   )
