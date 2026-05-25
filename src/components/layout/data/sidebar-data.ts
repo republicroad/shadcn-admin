@@ -23,7 +23,8 @@ import {
   GalleryVerticalEnd,
   ProjectorIcon,
   RulerIcon,
-  EyeOff
+  Voicemail,
+  EyeOff,
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -59,18 +60,23 @@ export const sidebarData: SidebarData = {
           title: '仪表盘',
           url: '/',
           icon: LayoutDashboard,
-        },        
+        },
         {
           title: '用户',
           url: '/users',
           icon: Users,
         },
-       {
+        {
           title: '项目',
           url: '/projects',
           icon: ProjectorIcon,
         },
-       {
+        {
+          title: '通知管理',
+          url: '/notifications',
+          icon: Bell,
+        },
+        {
           title: '规则',
           url: '/rules',
           icon: RulerIcon,
@@ -80,11 +86,7 @@ export const sidebarData: SidebarData = {
           url: '/rosters',
           // icon: ListTodo,
         },
-        {
-          title: '通知',
-          url: '/notifications',
-          // icon: ListTodo,
-        },
+
         {
           title: '共享计数器',
           url: '/shareCounters',
@@ -225,7 +227,7 @@ export const sidebarData: SidebarData = {
               title: 'Password',
               url: '/settings/password',
               icon: EyeOff,
-            }
+            },
           ],
         },
         // {
@@ -242,13 +244,13 @@ export const sidebarData: SidebarData = {
           title: '编辑器',
           url: '/editors',
           // icon: LayoutDashboard,
-        },        
+        },
         {
           title: '表达式',
           url: '/zen-expressions',
           // icon: Users,
         },
-      ]
+      ],
     },
   ],
 }
