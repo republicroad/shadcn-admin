@@ -54,12 +54,9 @@ export function ForgotPasswordResetPasswordForm({
 
   const { mutateAsync } = useMutation({
     // isError, isSuccess, data, error
-    // mutationFn: loginUser,
-    //  (credentials as { email: string }).email
     mutationFn: async (credentials: Record<string, unknown>) => {
       console.log(credentials)
     },
-    // authApi.post('/api/auth/login', credentials),
     onSuccess: async (response) => {
       console.log('mutationFn onSuccess:', response)
       // data 以后可以考虑用 typescript 类型来定义.

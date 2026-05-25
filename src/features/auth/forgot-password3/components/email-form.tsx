@@ -17,21 +17,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { authService } from '@/features/auth/services/auth'
 
 const formSchema = z.object({
   email: z.email({
     error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
   }),
 })
-
-// const loginUser = async (credentials: any) => {
-//   const response = await authApi.post('/api/auth/login', {
-//     ...credentials,
-//     username: credentials.email,
-//   }) // Replace with your API endpoint
-//   console.log('loginUser response:', response)
-//   return response
-// }
 
 interface FormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
@@ -55,12 +47,9 @@ export function ForgotPasswordEmailForm({
 
   const { mutateAsync } = useMutation({
     // isError, isSuccess, data, error
-    // mutationFn: loginUser,
-    //  (credentials as { email: string }).email
     mutationFn: async (credentials: Record<string, unknown>) => {
       console.log(credentials)
     },
-    // authApi.post('/api/auth/login', credentials),
     onSuccess: async (response) => {
       console.log('mutationFn onSuccess:', response)
       // data 以后可以考虑用 typescript 类型来定义.
