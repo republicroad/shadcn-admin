@@ -26,6 +26,7 @@ import {
   Voicemail,
   EyeOff,
   ListOrdered,
+  FolderGit2
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -67,10 +68,10 @@ export const sidebarData: SidebarData = {
           url: '/users',
           icon: Users,
         },
-        {
-          title: '项目',
+       {
+          title: '场景管理',
           url: '/projects',
-          icon: ProjectorIcon,
+          icon: FolderGit2  ,
         },
         {
           title: '通知管理',
