@@ -38,6 +38,43 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
 }
 
+function getResponseData(payload: unknown) {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return payload.data
+  }
+
+  return payload
+}
+
+function getStringField(
+  payload: unknown,
+  keys: string[]
+): string | undefined {
+  if (!payload || typeof payload !== 'object') return undefined
+  const record = payload as Record<string, unknown>
+
+  for (const key of keys) {
+    const value = record[key]
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim()
+    }
+  }
+
+  return undefined
+}
+
+function getStringFieldFromSources(
+  sources: unknown[],
+  keys: string[]
+): string | undefined {
+  for (const source of sources) {
+    const value = getStringField(source, keys)
+    if (value) return value
+  }
+
+  return undefined
+}
+
 export function UserAuthForm({
   className,
   redirectTo,
@@ -59,7 +96,34 @@ export function UserAuthForm({
     // isError, isSuccess, data, error
     mutationFn: authService.login,
     onSuccess: async (d) => {
-      await login(d.data.accessToken) // 直接调用 login 方法来设置 user 和 accessToken, 以及 expiresAt.
+      const responseData = getResponseData(d)
+      const responseUser =
+        responseData && typeof responseData === 'object' && 'user' in responseData
+          ? responseData.user
+          : undefined
+      const accessToken = getStringFieldFromSources([responseData, d], [
+        'accessToken',
+        'access_token',
+      ])
+
+      if (!accessToken) {
+        throw new Error('登录响应缺少 accessToken')
+      }
+
+      await login(accessToken, {
+        user_id: getStringFieldFromSources(
+          [responseData, responseUser, d],
+          ['user_id', 'userId']
+        ),
+        user_key: getStringFieldFromSources(
+          [responseData, responseUser, d],
+          ['user_key', 'userKey']
+        ),
+        username: getStringFieldFromSources(
+          [responseData, responseUser, d],
+          ['username', 'user_name']
+        ),
+      })
       // toast.success(data.message)
       // 这里抛出一个错误来触发 toast 的 error 状态, 因为 login 成功后我们还需要做一些其他的操作, 比如跳转和显示 toast.
       // throw new Error(data.message + '\n 强抛错误, 应该会在 toast 中显示')

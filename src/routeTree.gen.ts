@@ -25,9 +25,11 @@ import { Route as authForgotPassword3RouteImport } from './routes/(auth)/forgot-
 import { Route as authForgotPassword2RouteImport } from './routes/(auth)/forgot-password2'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedRulesRouteRouteImport } from './routes/_authenticated/rules/route'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedRulesIndexRouteImport } from './routes/_authenticated/rules/index'
 import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects/index'
 import { Route as AuthenticatedNotificationsIndexRouteImport } from './routes/_authenticated/notifications/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
@@ -39,6 +41,7 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedRulesTestRouteImport } from './routes/_authenticated/rules/test'
 import { Route as AuthenticatedFormListListRouteImport } from './routes/_authenticated/formList/list'
 import { Route as AuthenticatedFormListDetailRouteImport } from './routes/_authenticated/formList/detail'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
@@ -123,6 +126,11 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRulesRouteRoute = AuthenticatedRulesRouteRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -139,6 +147,11 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedRulesIndexRoute = AuthenticatedRulesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRulesRouteRoute,
+} as any)
 const AuthenticatedProjectsIndexRoute =
   AuthenticatedProjectsIndexRouteImport.update({
     id: '/projects/',
@@ -203,6 +216,11 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedRulesTestRoute = AuthenticatedRulesTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => AuthenticatedRulesRouteRoute,
+} as any)
 const AuthenticatedFormListListRoute =
   AuthenticatedFormListListRouteImport.update({
     id: '/formList/list',
@@ -224,6 +242,7 @@ const AuthenticatedErrorsErrorRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/rules': typeof AuthenticatedRulesRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/forgot-password2': typeof authForgotPassword2Route
@@ -241,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
+  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -252,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/notifications/': typeof AuthenticatedNotificationsIndexRoute
   '/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/rules/': typeof AuthenticatedRulesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
@@ -274,6 +295,7 @@ export interface FileRoutesByTo {
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
+  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -285,6 +307,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/notifications': typeof AuthenticatedNotificationsIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
+  '/rules': typeof AuthenticatedRulesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -292,6 +315,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/rules': typeof AuthenticatedRulesRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/forgot-password2': typeof authForgotPassword2Route
@@ -310,6 +334,7 @@ export interface FileRoutesById {
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/_authenticated/formList/list': typeof AuthenticatedFormListListRoute
+  '/_authenticated/rules/test': typeof AuthenticatedRulesTestRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -321,6 +346,7 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/notifications/': typeof AuthenticatedNotificationsIndexRoute
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/_authenticated/rules/': typeof AuthenticatedRulesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -329,6 +355,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/rules'
     | '/settings'
     | '/forgot-password'
     | '/forgot-password2'
@@ -346,6 +373,7 @@ export interface FileRouteTypes {
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
+    | '/rules/test'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -357,6 +385,7 @@ export interface FileRouteTypes {
     | '/help-center/'
     | '/notifications/'
     | '/projects/'
+    | '/rules/'
     | '/settings/'
     | '/tasks/'
     | '/users/'
@@ -379,6 +408,7 @@ export interface FileRouteTypes {
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
+    | '/rules/test'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -390,12 +420,14 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/notifications'
     | '/projects'
+    | '/rules'
     | '/settings'
     | '/tasks'
     | '/users'
   id:
     | '__root__'
     | '/_authenticated'
+    | '/_authenticated/rules'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
     | '/(auth)/forgot-password2'
@@ -414,6 +446,7 @@ export interface FileRouteTypes {
     | '/_authenticated/errors/$error'
     | '/_authenticated/formList/detail'
     | '/_authenticated/formList/list'
+    | '/_authenticated/rules/test'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -425,6 +458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/notifications/'
     | '/_authenticated/projects/'
+    | '/_authenticated/rules/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
@@ -561,6 +595,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rules': {
+      id: '/_authenticated/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof AuthenticatedRulesRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -581,6 +622,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/rules/': {
+      id: '/_authenticated/rules/'
+      path: '/'
+      fullPath: '/rules/'
+      preLoaderRoute: typeof AuthenticatedRulesIndexRouteImport
+      parentRoute: typeof AuthenticatedRulesRouteRoute
     }
     '/_authenticated/projects/': {
       id: '/_authenticated/projects/'
@@ -659,6 +707,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/rules/test': {
+      id: '/_authenticated/rules/test'
+      path: '/test'
+      fullPath: '/rules/test'
+      preLoaderRoute: typeof AuthenticatedRulesTestRouteImport
+      parentRoute: typeof AuthenticatedRulesRouteRoute
+    }
     '/_authenticated/formList/list': {
       id: '/_authenticated/formList/list'
       path: '/formList/list'
@@ -682,6 +737,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedRulesRouteRouteChildren {
+  AuthenticatedRulesTestRoute: typeof AuthenticatedRulesTestRoute
+  AuthenticatedRulesIndexRoute: typeof AuthenticatedRulesIndexRoute
+}
+
+const AuthenticatedRulesRouteRouteChildren: AuthenticatedRulesRouteRouteChildren =
+  {
+    AuthenticatedRulesTestRoute: AuthenticatedRulesTestRoute,
+    AuthenticatedRulesIndexRoute: AuthenticatedRulesIndexRoute,
+  }
+
+const AuthenticatedRulesRouteRouteWithChildren =
+  AuthenticatedRulesRouteRoute._addFileChildren(
+    AuthenticatedRulesRouteRouteChildren,
+  )
 
 interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
@@ -709,6 +780,7 @@ const AuthenticatedSettingsRouteRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedRulesRouteRoute: typeof AuthenticatedRulesRouteRouteWithChildren
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
@@ -725,6 +797,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedRulesRouteRoute: AuthenticatedRulesRouteRouteWithChildren,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
