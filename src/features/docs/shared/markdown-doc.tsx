@@ -127,16 +127,30 @@ export function extractTableOfContents(markdown: string) {
   return toc
 }
 
-export function createMarkdownComponents(): Components {
+export function createMarkdownComponents(headingIds?: string[]): Components {
   const createHeadingId = createHeadingIdFactory()
+  let headingIndex = 0
 
-  const resolveHeadingId = (children: ReactNode) =>
-    createHeadingId(stripMarkdownInline(collectNodeText(children)))
+  const resolveHeadingId = (children: ReactNode) => {
+    const providedId = headingIds?.[headingIndex]
+    headingIndex += 1
+
+    if (providedId) {
+      return providedId
+    }
+
+    return createHeadingId(stripMarkdownInline(collectNodeText(children)))
+  }
+
+  const getHeadingProps = (children: ReactNode) => ({
+    id: resolveHeadingId(children),
+    'data-doc-heading': 'true',
+  })
 
   return {
     h1: ({ className, children, ...props }) => (
       <h1
-        id={resolveHeadingId(children)}
+        {...getHeadingProps(children)}
         className={cn(
           'mt-10 mb-6 scroll-m-20 text-4xl font-semibold tracking-tight first:mt-0',
           className
@@ -148,7 +162,7 @@ export function createMarkdownComponents(): Components {
     ),
     h2: ({ className, children, ...props }) => (
       <h2
-        id={resolveHeadingId(children)}
+        {...getHeadingProps(children)}
         className={cn(
           'mt-10 mb-4 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0',
           className
@@ -160,7 +174,7 @@ export function createMarkdownComponents(): Components {
     ),
     h3: ({ className, children, ...props }) => (
       <h3
-        id={resolveHeadingId(children)}
+        {...getHeadingProps(children)}
         className={cn('mt-8 mb-3 scroll-m-20 text-xl font-semibold tracking-tight', className)}
         {...props}
       >
@@ -169,7 +183,7 @@ export function createMarkdownComponents(): Components {
     ),
     h4: ({ className, children, ...props }) => (
       <h4
-        id={resolveHeadingId(children)}
+        {...getHeadingProps(children)}
         className={cn('mt-6 mb-2 scroll-m-20 text-lg font-semibold', className)}
         {...props}
       >
