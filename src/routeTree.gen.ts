@@ -42,6 +42,8 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedRulesTestRouteImport } from './routes/_authenticated/rules/test'
+import { Route as AuthenticatedLexiconListRouteImport } from './routes/_authenticated/lexicon/list'
+import { Route as AuthenticatedLexiconDetailRouteImport } from './routes/_authenticated/lexicon/detail'
 import { Route as AuthenticatedFormListListRouteImport } from './routes/_authenticated/formList/list'
 import { Route as AuthenticatedFormListDetailRouteImport } from './routes/_authenticated/formList/detail'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
@@ -223,6 +225,18 @@ const AuthenticatedRulesTestRoute = AuthenticatedRulesTestRouteImport.update({
   path: '/test',
   getParentRoute: () => AuthenticatedRulesRouteRoute,
 } as any)
+const AuthenticatedLexiconListRoute =
+  AuthenticatedLexiconListRouteImport.update({
+    id: '/lexicon/list',
+    path: '/lexicon/list',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLexiconDetailRoute =
+  AuthenticatedLexiconDetailRouteImport.update({
+    id: '/lexicon/detail',
+    path: '/lexicon/detail',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedFormListListRoute =
   AuthenticatedFormListListRouteImport.update({
     id: '/formList/list',
@@ -275,6 +289,8 @@ export interface FileRoutesByFullPath {
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
   '/rules/test': typeof AuthenticatedRulesTestRoute
+  '/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
+  '/lexicon/list': typeof AuthenticatedLexiconListRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -312,6 +328,8 @@ export interface FileRoutesByTo {
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
   '/rules/test': typeof AuthenticatedRulesTestRoute
+  '/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
+  '/lexicon/list': typeof AuthenticatedLexiconListRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -353,6 +371,8 @@ export interface FileRoutesById {
   '/_authenticated/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/_authenticated/formList/list': typeof AuthenticatedFormListListRoute
   '/_authenticated/rules/test': typeof AuthenticatedRulesTestRoute
+  '/_authenticated/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
+  '/_authenticated/lexicon/list': typeof AuthenticatedLexiconListRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -394,6 +414,8 @@ export interface FileRouteTypes {
     | '/formList/detail'
     | '/formList/list'
     | '/rules/test'
+    | '/lexicon/detail'
+    | '/lexicon/list'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -431,6 +453,8 @@ export interface FileRouteTypes {
     | '/formList/detail'
     | '/formList/list'
     | '/rules/test'
+    | '/lexicon/detail'
+    | '/lexicon/list'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -471,6 +495,8 @@ export interface FileRouteTypes {
     | '/_authenticated/formList/detail'
     | '/_authenticated/formList/list'
     | '/_authenticated/rules/test'
+    | '/_authenticated/lexicon/detail'
+    | '/_authenticated/lexicon/list'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -737,6 +763,19 @@ declare module '@tanstack/react-router' {
       fullPath: '/rules/test'
       preLoaderRoute: typeof AuthenticatedRulesTestRouteImport
       parentRoute: typeof AuthenticatedRulesRouteRoute
+    '/_authenticated/lexicon/list': {
+      id: '/_authenticated/lexicon/list'
+      path: '/lexicon/list'
+      fullPath: '/lexicon/list'
+      preLoaderRoute: typeof AuthenticatedLexiconListRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lexicon/detail': {
+      id: '/_authenticated/lexicon/detail'
+      path: '/lexicon/detail'
+      fullPath: '/lexicon/detail'
+      preLoaderRoute: typeof AuthenticatedLexiconDetailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/formList/list': {
       id: '/_authenticated/formList/list'
@@ -826,6 +865,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedFormListDetailRoute: typeof AuthenticatedFormListDetailRoute
   AuthenticatedFormListListRoute: typeof AuthenticatedFormListListRoute
+  AuthenticatedLexiconDetailRoute: typeof AuthenticatedLexiconDetailRoute
+  AuthenticatedLexiconListRoute: typeof AuthenticatedLexiconListRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedCounterIndexRoute: typeof AuthenticatedCounterIndexRoute
@@ -845,6 +886,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedFormListDetailRoute: AuthenticatedFormListDetailRoute,
   AuthenticatedFormListListRoute: AuthenticatedFormListListRoute,
+  AuthenticatedLexiconDetailRoute: AuthenticatedLexiconDetailRoute,
+  AuthenticatedLexiconListRoute: AuthenticatedLexiconListRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedCounterIndexRoute: AuthenticatedCounterIndexRoute,
