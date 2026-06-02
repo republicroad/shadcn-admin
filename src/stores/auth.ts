@@ -5,11 +5,16 @@ import { decodeJwt } from '@/lib/jwt'
 export interface User {
   id?: string
   accountNo?: string
+  username?: string
   email: string
   phone?: string
   role?: string[]
+  user_id?: string
+  user_key?: string
+  userKey?: string
   exp: number
   ttl?: number
+  [key: string]: unknown
 }
 
 interface AuthState {
@@ -21,7 +26,7 @@ interface AuthState {
   resetAccessToken: () => void
   reset: () => void
   isAuthenticated: () => boolean
-  login: (accessToken: string) => void
+  login: (accessToken: string, extraUser?: Partial<User>) => void
   // logout: () => void
 }
 
@@ -53,10 +58,13 @@ export const useAuthStore = create<AuthState>()(
           // console.log('Date.now() / 1000:', Date.now() / 1000)
           return result
         }, // 以后可以根据 user 和 accessToken 来判断是否 authenticated.
-        login: async (accessToken: string) => {
+        login: async (accessToken: string, extraUser?: Partial<User>) => {
           // const { payload: user } = await decode_Jwt(accessToken)
           const payload = decodeJwt(accessToken)
-          const user: User = payload as unknown as User
+          const user: User = {
+            ...(payload as unknown as User),
+            ...(extraUser ?? {}),
+          }
           const expiresAt = user.exp
           set({ user, accessToken, expiresAt })
         },
