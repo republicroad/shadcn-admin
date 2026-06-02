@@ -25,7 +25,8 @@ import {
   RulerIcon,
   Voicemail,
   EyeOff,
-  ListOrdered,
+  ListTree,
+  TimerReset,
   FolderGit2
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
@@ -90,7 +91,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: '名单管理',
-          icon: ListOrdered,
+          icon: ListTree,
           items:[
             {
               title: '名单列表',
@@ -106,7 +107,7 @@ export const sidebarData: SidebarData = {
         {
           title: '共享计数器',
           url: '/counter',
-          // icon: ListTodo,
+          icon: TimerReset,
         },
         {
           title: '时间累加器',
@@ -262,9 +263,12 @@ export const sidebarData: SidebarData = {
           // icon: LayoutDashboard,
         },
         {
-          title: '表达式',
-          url: '/zen-expressions',
-          // icon: Users,
+          title: '表达式文档',
+          url: '/docs/zen',
+        },
+        {
+          title: 'JDM决策模型文档',
+          url: '/docs/jdm',
         },
       ],
     },

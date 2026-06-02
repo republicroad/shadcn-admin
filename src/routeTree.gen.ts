@@ -45,6 +45,8 @@ import { Route as AuthenticatedRulesTestRouteImport } from './routes/_authentica
 import { Route as AuthenticatedFormListListRouteImport } from './routes/_authenticated/formList/list'
 import { Route as AuthenticatedFormListDetailRouteImport } from './routes/_authenticated/formList/detail'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedDocsZenRouteImport } from './routes/_authenticated/docs/zen'
+import { Route as AuthenticatedDocsJdmRouteImport } from './routes/_authenticated/docs/jdm'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -239,6 +241,16 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDocsZenRoute = AuthenticatedDocsZenRouteImport.update({
+  id: '/docs/zen',
+  path: '/docs/zen',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDocsJdmRoute = AuthenticatedDocsJdmRouteImport.update({
+  id: '/docs/jdm',
+  path: '/docs/jdm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -257,6 +269,8 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/docs/jdm': typeof AuthenticatedDocsJdmRoute
+  '/docs/zen': typeof AuthenticatedDocsZenRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
@@ -292,6 +306,8 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/docs/jdm': typeof AuthenticatedDocsJdmRoute
+  '/docs/zen': typeof AuthenticatedDocsZenRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
@@ -331,6 +347,8 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/docs/jdm': typeof AuthenticatedDocsJdmRoute
+  '/_authenticated/docs/zen': typeof AuthenticatedDocsZenRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/_authenticated/formList/list': typeof AuthenticatedFormListListRoute
@@ -370,6 +388,8 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/docs/jdm'
+    | '/docs/zen'
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
@@ -405,6 +425,8 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/docs/jdm'
+    | '/docs/zen'
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
@@ -443,6 +465,8 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/docs/jdm'
+    | '/_authenticated/docs/zen'
     | '/_authenticated/errors/$error'
     | '/_authenticated/formList/detail'
     | '/_authenticated/formList/list'
@@ -735,6 +759,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/docs/zen': {
+      id: '/_authenticated/docs/zen'
+      path: '/docs/zen'
+      fullPath: '/docs/zen'
+      preLoaderRoute: typeof AuthenticatedDocsZenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/docs/jdm': {
+      id: '/_authenticated/docs/jdm'
+      path: '/docs/jdm'
+      fullPath: '/docs/jdm'
+      preLoaderRoute: typeof AuthenticatedDocsJdmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -783,6 +821,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRulesRouteRoute: typeof AuthenticatedRulesRouteRouteWithChildren
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedDocsJdmRoute: typeof AuthenticatedDocsJdmRoute
+  AuthenticatedDocsZenRoute: typeof AuthenticatedDocsZenRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedFormListDetailRoute: typeof AuthenticatedFormListDetailRoute
   AuthenticatedFormListListRoute: typeof AuthenticatedFormListListRoute
@@ -800,6 +840,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRulesRouteRoute: AuthenticatedRulesRouteRouteWithChildren,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedDocsJdmRoute: AuthenticatedDocsJdmRoute,
+  AuthenticatedDocsZenRoute: AuthenticatedDocsZenRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedFormListDetailRoute: AuthenticatedFormListDetailRoute,
   AuthenticatedFormListListRoute: AuthenticatedFormListListRoute,
