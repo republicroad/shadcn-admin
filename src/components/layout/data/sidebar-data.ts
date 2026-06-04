@@ -26,11 +26,10 @@ import {
   Voicemail,
   EyeOff,
   ListOrdered,
-  FolderGit2,
   List,
   ListTree,
   TimerReset,
-  FolderGit2
+  FolderGit2,
 } from 'lucide-react'
 // import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -72,15 +71,15 @@ export const sidebarData: SidebarData = {
           url: '/users',
           icon: Users,
         },
-       {
+        {
           title: '场景管理',
           url: '/projects',
-          icon: FolderGit2  ,
+          icon: FolderGit2,
         },
         {
           title: '词库管理',
           icon: List,
-          items:[
+          items: [
             {
               title: '词库列表',
               url: '/lexicon/list',
@@ -89,7 +88,7 @@ export const sidebarData: SidebarData = {
               title: '词库详情',
               url: '/lexicon/detail',
             },
-          ]
+          ],
         },
         {
           title: '通知管理',
@@ -109,7 +108,7 @@ export const sidebarData: SidebarData = {
         {
           title: '名单管理',
           icon: ListTree,
-          items:[
+          items: [
             {
               title: '名单列表',
               url: '/formList/list',
@@ -118,7 +117,7 @@ export const sidebarData: SidebarData = {
               title: '名单详情',
               url: '/formList/detail',
             },
-          ]
+          ],
         },
 
         {
