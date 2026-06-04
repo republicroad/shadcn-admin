@@ -16,6 +16,7 @@ import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as editorEditorRouteImport } from './routes/(editor)/editor'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignIn2RouteImport } from './routes/(auth)/sign-in-2'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
@@ -82,6 +83,11 @@ const errors403Route = errors403RouteImport.update({
 const errors401Route = errors401RouteImport.update({
   id: '/(errors)/401',
   path: '/401',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const editorEditorRoute = editorEditorRouteImport.update({
+  id: '/(editor)/editor',
+  path: '/editor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authSignUpRoute = authSignUpRouteImport.update({
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
+  '/editor': typeof editorEditorRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -288,9 +295,9 @@ export interface FileRoutesByFullPath {
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
-  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
   '/lexicon/list': typeof AuthenticatedLexiconListRoute
+  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
+  '/editor': typeof editorEditorRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -327,9 +335,9 @@ export interface FileRoutesByTo {
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/formList/list': typeof AuthenticatedFormListListRoute
-  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
   '/lexicon/list': typeof AuthenticatedLexiconListRoute
+  '/rules/test': typeof AuthenticatedRulesTestRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-in-2': typeof authSignIn2Route
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/(editor)/editor': typeof editorEditorRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
@@ -370,9 +379,9 @@ export interface FileRoutesById {
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/formList/detail': typeof AuthenticatedFormListDetailRoute
   '/_authenticated/formList/list': typeof AuthenticatedFormListListRoute
-  '/_authenticated/rules/test': typeof AuthenticatedRulesTestRoute
   '/_authenticated/lexicon/detail': typeof AuthenticatedLexiconDetailRoute
   '/_authenticated/lexicon/list': typeof AuthenticatedLexiconListRoute
+  '/_authenticated/rules/test': typeof AuthenticatedRulesTestRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -403,6 +412,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
+    | '/editor'
     | '/401'
     | '/403'
     | '/404'
@@ -413,9 +423,9 @@ export interface FileRouteTypes {
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
-    | '/rules/test'
     | '/lexicon/detail'
     | '/lexicon/list'
+    | '/rules/test'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
+    | '/editor'
     | '/401'
     | '/403'
     | '/404'
@@ -452,9 +463,9 @@ export interface FileRouteTypes {
     | '/errors/$error'
     | '/formList/detail'
     | '/formList/list'
-    | '/rules/test'
     | '/lexicon/detail'
     | '/lexicon/list'
+    | '/rules/test'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -483,6 +494,7 @@ export interface FileRouteTypes {
     | '/(auth)/sign-in'
     | '/(auth)/sign-in-2'
     | '/(auth)/sign-up'
+    | '/(editor)/editor'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
@@ -494,9 +506,9 @@ export interface FileRouteTypes {
     | '/_authenticated/errors/$error'
     | '/_authenticated/formList/detail'
     | '/_authenticated/formList/list'
-    | '/_authenticated/rules/test'
     | '/_authenticated/lexicon/detail'
     | '/_authenticated/lexicon/list'
+    | '/_authenticated/rules/test'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -524,6 +536,7 @@ export interface RootRouteChildren {
   authSignInRoute: typeof authSignInRoute
   authSignIn2Route: typeof authSignIn2Route
   authSignUpRoute: typeof authSignUpRoute
+  editorEditorRoute: typeof editorEditorRoute
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors404Route: typeof errors404Route
@@ -580,6 +593,13 @@ declare module '@tanstack/react-router' {
       path: '/401'
       fullPath: '/401'
       preLoaderRoute: typeof errors401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(editor)/editor': {
+      id: '/(editor)/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof editorEditorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/sign-up': {
@@ -763,6 +783,7 @@ declare module '@tanstack/react-router' {
       fullPath: '/rules/test'
       preLoaderRoute: typeof AuthenticatedRulesTestRouteImport
       parentRoute: typeof AuthenticatedRulesRouteRoute
+    }
     '/_authenticated/lexicon/list': {
       id: '/_authenticated/lexicon/list'
       path: '/lexicon/list'
@@ -911,6 +932,7 @@ const rootRouteChildren: RootRouteChildren = {
   authSignInRoute: authSignInRoute,
   authSignIn2Route: authSignIn2Route,
   authSignUpRoute: authSignUpRoute,
+  editorEditorRoute: editorEditorRoute,
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors404Route: errors404Route,
